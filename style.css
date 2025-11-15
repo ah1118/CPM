@@ -1,4 +1,6 @@
-/* ========== Global ========== */
+/* =========================
+   GLOBAL 
+========================= */
 body {
   margin: 0;
   padding: 0;
@@ -26,7 +28,9 @@ body {
   color: #9ca3af;
 }
 
-/* ========== Sections ========== */
+/* =========================
+   HOLD SECTIONS
+========================= */
 .hold-section {
   margin-top: 28px;
   padding: 16px;
@@ -36,17 +40,19 @@ body {
 }
 
 .hold-section h2 {
-  margin: 0 0 6px;
+  margin: 0 0 8px;
 }
 
-/* ========== Legend ========== */
+/* =========================
+   LEGEND
+========================= */
 .legend {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   font-size: 12px;
   color: #9ca3af;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .legend-item {
@@ -71,30 +77,36 @@ body {
 }
 
 .legend-box.disabled {
-  background: #020617;
+  background: #1e293b;
   border-color: #4b5563;
 }
 
-/* ========== Fixed deck width ========== */
+/* =========================
+   DECK GRID (fixed width)
+========================= */
 .deck-grid {
-  width: 820px;          /* total deck width so rows align */
+  width: 750px;          /* Perfect alignment width */
   margin: 0 auto;
 }
 
-/* ========== Rows ========== */
+/* =========================
+   ROW LAYOUT
+========================= */
 .ake-row,
 .pallet-row {
   width: 100%;
   display: flex;
   flex-wrap: nowrap !important;
   justify-content: flex-start;
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
-/* ========== Slot base ========== */
+/* =========================
+   SLOTS
+========================= */
 .slot {
-  height: 45px;
+  height: 48px;
   background: #0f172a;
   border: 1px solid #4b5563;
   border-radius: 8px;
@@ -104,7 +116,7 @@ body {
   justify-content: center;
   position: relative;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .slot::before {
@@ -116,29 +128,24 @@ body {
   color: #9ca3af;
 }
 
-/* AKE width (1 unit) */
+/* =========================
+   SCHEMATIC WIDTHS 
+   (Matches real LIR drawing)
+========================= */
+
+/* AKE = ALL SAME */
 .slot.ake {
-  width: 60px;
+  width: 70px; /* uniform container width */
 }
 
-/* ===== Real pallet widths (from LIR) ===== */
+/* PALLET = ALL SAME (schematic) */
+.slot.pallet {
+  width: 110px; /* uniform pallet width */
+}
 
-/* Forward */
-.slot[data-pos="24P"] { width: 159px; }
-.slot[data-pos="23P"] { width: 159px; }
-.slot[data-pos="22P"] { width: 123px; }
-.slot[data-pos="21P"] { width:  99px; }
-.slot[data-pos="12P"] { width: 123px; }
-.slot[data-pos="11P"] { width: 123px; }
-
-/* Aft */
-.slot[data-pos="42P"] { width: 123px; }
-.slot[data-pos="41P"] { width: 123px; }
-.slot[data-pos="33P"] { width: 123px; }
-.slot[data-pos="32P"] { width: 123px; }
-.slot[data-pos="31P"] { width:  60px; }
-
-/* ========== States ========== */
+/* =========================
+   INTERACTION STATES
+========================= */
 .slot.has-uld {
   border-color: #22c55e;
   box-shadow: 0 0 8px rgba(34, 197, 94, 0.45);
@@ -149,7 +156,9 @@ body {
   pointer-events: none;
 }
 
-/* ========== Controls & Output ========== */
+/* =========================
+   CONTROLS & OUTPUT
+========================= */
 .controls {
   margin-top: 20px;
   display: flex;
@@ -185,4 +194,3 @@ body {
   font-size: 12px;
   resize: vertical;
 }
-
