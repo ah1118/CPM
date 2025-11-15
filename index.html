@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Visual LIR - A330 Cargo</title>
+  <title>Visual LIR - A330 Cargo Deck</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -10,120 +10,113 @@
   <div class="app">
     <header class="header">
       <h1>Visual LIR - A330 Cargo Deck</h1>
-      <p class="subtitle">Dark mode · AKE vs PAG/PMC/PAJ with real blocking rules</p>
+      <p class="subtitle">Dark mode · Real AKE/PAG widths · Real blocking zones</p>
     </header>
 
     <main>
-      <!-- ===== FORWARD HOLD ===== -->
+
+      <!-- ========================================== -->
+      <!--                FORWARD HOLD               -->
+      <!-- ========================================== -->
       <section class="hold-section">
         <h2>FORWARD HOLD</h2>
 
         <div class="legend">
-          <span class="legend-item"><span class="legend-box container"></span>Container positions (AKE)</span>
-          <span class="legend-item"><span class="legend-box pallet"></span>Pallet positions (PAG / PMC / PAJ)</span>
-          <span class="legend-item"><span class="legend-box disabled"></span>Blocked by another ULD</span>
+          <span class="legend-item"><span class="legend-box container"></span>Containers (AKE)</span>
+          <span class="legend-item"><span class="legend-box pallet"></span>Pallets (PAG/PMC/PAJ)</span>
+          <span class="legend-item"><span class="legend-box disabled"></span>Blocked</span>
         </div>
 
-        <div class="hold-grid">
-          <div class="hold-column">
-            <div class="row-label">Containers L</div>
-            <div class="row">
-              <div class="slot" data-pos="26L"></div>
-              <div class="slot" data-pos="25L"></div>
-              <div class="slot" data-pos="24L"></div>
-              <div class="slot" data-pos="23L"></div>
-              <div class="slot" data-pos="22L"></div>
-              <div class="slot" data-pos="21L"></div>
-              <div class="slot" data-pos="13L"></div>
-              <div class="slot" data-pos="12L"></div>
-              <div class="slot" data-pos="11L"></div>
-            </div>
-          </div>
-
-          <div class="hold-column">
-            <div class="row-label">Containers R</div>
-            <div class="row">
-              <div class="slot" data-pos="26R"></div>
-              <div class="slot" data-pos="25R"></div>
-              <div class="slot" data-pos="24R"></div>
-              <div class="slot" data-pos="23R"></div>
-              <div class="slot" data-pos="22R"></div>
-              <div class="slot" data-pos="21R"></div>
-              <div class="slot" data-pos="13R"></div>
-              <div class="slot" data-pos="12R"></div>
-              <div class="slot" data-pos="11R"></div>
-            </div>
-          </div>
+        <!-- Containers L -->
+        <div class="ake-row">
+          <div class="slot ake" data-pos="26L"></div>
+          <div class="slot ake" data-pos="25L"></div>
+          <div class="slot ake" data-pos="24L"></div>
+          <div class="slot ake" data-pos="23L"></div>
+          <div class="slot ake" data-pos="22L"></div>
+          <div class="slot ake" data-pos="21L"></div>
+          <div class="slot ake" data-pos="13L"></div>
+          <div class="slot ake" data-pos="12L"></div>
+          <div class="slot ake" data-pos="11L"></div>
         </div>
 
+        <!-- Containers R -->
+        <div class="ake-row">
+          <div class="slot ake" data-pos="26R"></div>
+          <div class="slot ake" data-pos="25R"></div>
+          <div class="slot ake" data-pos="24R"></div>
+          <div class="slot ake" data-pos="23R"></div>
+          <div class="slot ake" data-pos="22R"></div>
+          <div class="slot ake" data-pos="21R"></div>
+          <div class="slot ake" data-pos="13R"></div>
+          <div class="slot ake" data-pos="12R"></div>
+          <div class="slot ake" data-pos="11R"></div>
+        </div>
+
+        <!-- Forward Pallets -->
         <div class="pallet-row">
-          <div class="row-label">Pallets</div>
-          <div class="row">
-            <div class="slot pallet-slot" data-pos="24P"></div>
-            <div class="slot pallet-slot" data-pos="23P"></div>
-            <div class="slot pallet-slot" data-pos="22P"></div>
-            <div class="slot pallet-slot" data-pos="21P"></div>
-            <div class="slot pallet-slot" data-pos="12P"></div>
-            <div class="slot pallet-slot" data-pos="11P"></div>
-          </div>
+          <div class="slot pallet" data-pos="24P"></div>
+          <div class="slot pallet" data-pos="23P"></div>
+          <div class="slot pallet" data-pos="22P"></div>
+          <div class="slot pallet" data-pos="21P"></div>
+          <div class="slot pallet" data-pos="12P"></div>
+          <div class="slot pallet" data-pos="11P"></div>
         </div>
       </section>
 
-      <!-- ===== AFT HOLD ===== -->
+
+      <!-- ========================================== -->
+      <!--                  AFT HOLD                 -->
+      <!-- ========================================== -->
       <section class="hold-section">
         <h2>AFT HOLD</h2>
 
-        <div class="hold-grid">
-          <div class="hold-column">
-            <div class="row-label">Containers L</div>
-            <div class="row">
-              <div class="slot" data-pos="43L"></div>
-              <div class="slot" data-pos="42L"></div>
-              <div class="slot" data-pos="41L"></div>
-              <div class="slot" data-pos="34L"></div>
-              <div class="slot" data-pos="33L"></div>
-              <div class="slot" data-pos="32L"></div>
-              <div class="slot" data-pos="31L"></div>
-            </div>
-          </div>
-
-          <div class="hold-column">
-            <div class="row-label">Containers R</div>
-            <div class="row">
-              <div class="slot" data-pos="43R"></div>
-              <div class="slot" data-pos="42R"></div>
-              <div class="slot" data-pos="41R"></div>
-              <div class="slot" data-pos="34R"></div>
-              <div class="slot" data-pos="33R"></div>
-              <div class="slot" data-pos="32R"></div>
-              <div class="slot" data-pos="31R"></div>
-            </div>
-          </div>
+        <!-- Containers L -->
+        <div class="ake-row">
+          <div class="slot ake" data-pos="43L"></div>
+          <div class="slot ake" data-pos="42L"></div>
+          <div class="slot ake" data-pos="41L"></div>
+          <div class="slot ake" data-pos="34L"></div>
+          <div class="slot ake" data-pos="33L"></div>
+          <div class="slot ake" data-pos="32L"></div>
+          <div class="slot ake" data-pos="31L"></div>
         </div>
 
+        <!-- Containers R -->
+        <div class="ake-row">
+          <div class="slot ake" data-pos="43R"></div>
+          <div class="slot ake" data-pos="42R"></div>
+          <div class="slot ake" data-pos="41R"></div>
+          <div class="slot ake" data-pos="34R"></div>
+          <div class="slot ake" data-pos="33R"></div>
+          <div class="slot ake" data-pos="32R"></div>
+          <div class="slot ake" data-pos="31R"></div>
+        </div>
+
+        <!-- Aft Pallets -->
         <div class="pallet-row">
-          <div class="row-label">Pallets</div>
-          <div class="row">
-            <div class="slot pallet-slot" data-pos="42P"></div>
-            <div class="slot pallet-slot" data-pos="41P"></div>
-            <div class="slot pallet-slot" data-pos="33P"></div>
-            <div class="slot pallet-slot" data-pos="32P"></div>
-            <div class="slot pallet-slot" data-pos="31P"></div>
-          </div>
+          <div class="slot pallet" data-pos="42P"></div>
+          <div class="slot pallet" data-pos="41P"></div>
+          <div class="slot pallet" data-pos="33P"></div>
+          <div class="slot pallet" data-pos="32P"></div>
+          <div class="slot pallet" data-pos="31P"></div>
         </div>
       </section>
 
-      <!-- ===== CONTROLS / EXPORT ===== -->
+
+      <!-- ========================================== -->
+      <!--                CONTROLS                   -->
+      <!-- ========================================== -->
       <section class="controls">
         <button id="clear-btn">Clear All</button>
         <button id="export-btn">Export Layout</button>
-        <span class="export-hint">Export will copy a text summary to clipboard.</span>
       </section>
 
       <section class="output-section">
         <h2>Export Output</h2>
         <textarea id="export-output" readonly></textarea>
       </section>
+
     </main>
   </div>
 
