@@ -12,7 +12,7 @@
 
   <header class="header">
     <h1>Visual LIR - A330 Cargo Deck</h1>
-    <p class="subtitle">Dark Mode · Real AKE/PAG widths · Real blocking rules</p>
+    <p class="subtitle">Dark mode · Real AKE/PAG widths · Real blocking zones</p>
   </header>
 
   <main>
@@ -24,9 +24,15 @@
       <h2>FORWARD HOLD</h2>
 
       <div class="legend">
-        <span class="legend-item"><span class="legend-box container"></span> Containers (AKE)</span>
-        <span class="legend-item"><span class="legend-box pallet"></span> Pallets (PAG/PMC/PAJ)</span>
-        <span class="legend-item"><span class="legend-box disabled"></span> Blocked</span>
+        <span class="legend-item">
+          <span class="legend-box container"></span> Containers (AKE)
+        </span>
+        <span class="legend-item">
+          <span class="legend-box pallet"></span> Pallets (PAG/PMC/PAJ)
+        </span>
+        <span class="legend-item">
+          <span class="legend-box disabled"></span> Blocked
+        </span>
       </div>
 
       <div class="deck-grid">
@@ -57,7 +63,7 @@
           <div class="slot ake" data-pos="11R"></div>
         </div>
 
-        <!-- PALLETS -->
+        <!-- Forward Pallets -->
         <div class="pallet-row">
           <div class="slot pallet" data-pos="24P"></div>
           <div class="slot pallet" data-pos="23P"></div>
@@ -67,14 +73,12 @@
           <div class="slot pallet" data-pos="11P"></div>
         </div>
 
-      </div><!-- deck-grid -->
-
+      </div><!-- /deck-grid -->
     </section>
 
 
-
     <!-- ========================== -->
-    <!--        AFT HOLD           -->
+    <!--         AFT HOLD          -->
     <!-- ========================== -->
     <section class="hold-section">
       <h2>AFT HOLD</h2>
@@ -103,7 +107,7 @@
           <div class="slot ake" data-pos="31R"></div>
         </div>
 
-        <!-- PALLETS -->
+        <!-- Aft Pallets -->
         <div class="pallet-row">
           <div class="slot pallet" data-pos="42P"></div>
           <div class="slot pallet" data-pos="41P"></div>
@@ -112,14 +116,12 @@
           <div class="slot pallet" data-pos="31P"></div>
         </div>
 
-      </div><!-- deck-grid -->
-
+      </div><!-- /deck-grid -->
     </section>
 
 
-
     <!-- ========================== -->
-    <!--       CONTROLS            -->
+    <!--        CONTROLS           -->
     <!-- ========================== -->
     <section class="controls">
       <button id="clear-btn">Clear All</button>
@@ -132,9 +134,8 @@
     </section>
 
   </main>
-</div>
+</div><!-- /.app -->
 
 <script src="script.js"></script>
-
 </body>
 </html>
