@@ -2,48 +2,60 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>A330 Cargo Planner</title>
+  <title>A330 Cargo Hold Planner</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <div class="app-container">
 
-  <!-- ===================== -->
-  <!-- LEFT SIDEBAR PANEL   -->
-  <!-- ===================== -->
+  <!-- ================================================ -->
+  <!-- LEFT SIDE — LOAD BUILDER PANEL                  -->
+  <!-- ================================================ -->
   <aside class="sidebar">
+
     <h2>Load Builder</h2>
 
+    <!-- Add Load Button -->
     <button id="addLoadBtn" class="add-load-btn">+ Add Load</button>
 
-    <div id="loadList" class="load-list">
-      <!-- load rows injected here -->
+    <!-- Dynamic list of loads -->
+    <div id="loadList" class="load-list"></div>
+
+    <!-- Export + Clear Buttons -->
+    <div class="sidebar-buttons">
+      <button id="export-btn">Export Layout</button>
+      <button id="clear-btn" class="danger">Clear All</button>
     </div>
 
-    <div class="sidebar-buttons">
-      <button id="exportBtn">Export Layout</button>
-      <button id="clearAllBtn" class="danger">Clear All</button>
-    </div>
+    <!-- Exported text -->
+    <textarea id="export-output" placeholder="Export output will appear here..."></textarea>
+
   </aside>
 
-  <!-- ===================== -->
-  <!-- RIGHT SIDE: CARGO UI -->
-  <!-- ===================== -->
+
+
+  <!-- ================================================ -->
+  <!-- RIGHT SIDE — CARGO HOLD SCHEMATIC               -->
+  <!-- ================================================ -->
   <main class="cargo-area">
 
     <div class="header">
       <h1>A330 Cargo Hold Planner</h1>
-      <p class="subtitle">Dark Mode • Real Blocking Logic</p>
+      <p class="subtitle">Drag & Drop • Blocking Logic • AKE / PMC rules</p>
     </div>
 
-    <!-- ======= FORWARD HOLD ======= -->
+
+    <!-- ========================= -->
+    <!-- FORWARD HOLD             -->
+    <!-- ========================= -->
     <section class="hold-section">
       <h2>Forward Hold</h2>
 
       <div class="deck-grid">
 
-        <!-- AKE rows -->
+        <!-- LEFT AKE ROW -->
         <div class="ake-row">
           <div class="slot ake" data-pos="26L"></div>
           <div class="slot ake" data-pos="25L"></div>
@@ -56,6 +68,7 @@
           <div class="slot ake" data-pos="11L"></div>
         </div>
 
+        <!-- RIGHT AKE ROW -->
         <div class="ake-row">
           <div class="slot ake" data-pos="26R"></div>
           <div class="slot ake" data-pos="25R"></div>
@@ -68,7 +81,7 @@
           <div class="slot ake" data-pos="11R"></div>
         </div>
 
-        <!-- Pallets -->
+        <!-- PALLET ROW -->
         <div class="pallet-row">
           <div class="slot pallet" data-pos="24P"></div>
           <div class="slot pallet" data-pos="23P"></div>
@@ -79,14 +92,20 @@
         </div>
 
       </div>
+
     </section>
 
-    <!-- ======= AFT HOLD ======= -->
+
+
+    <!-- ========================= -->
+    <!-- AFT HOLD                 -->
+    <!-- ========================= -->
     <section class="hold-section">
       <h2>Aft Hold</h2>
 
       <div class="deck-grid aft-grid">
 
+        <!-- LEFT AKE ROW -->
         <div class="ake-row">
           <div class="slot ake" data-pos="43L"></div>
           <div class="slot ake" data-pos="42L"></div>
@@ -97,6 +116,7 @@
           <div class="slot ake" data-pos="31L"></div>
         </div>
 
+        <!-- RIGHT AKE ROW -->
         <div class="ake-row">
           <div class="slot ake" data-pos="43R"></div>
           <div class="slot ake" data-pos="42R"></div>
@@ -107,6 +127,7 @@
           <div class="slot ake" data-pos="31R"></div>
         </div>
 
+        <!-- PALLET ROW -->
         <div class="pallet-row">
           <div class="slot pallet" data-pos="42P"></div>
           <div class="slot pallet" data-pos="41P"></div>
@@ -116,11 +137,14 @@
         </div>
 
       </div>
+
     </section>
 
   </main>
+
 </div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
