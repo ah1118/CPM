@@ -12,53 +12,59 @@ body {
 .app {
   max-width: 1100px;
   margin: 20px auto;
-  padding: 16px;
-  background: radial-gradient(circle at top, #111827 0%, #020617 70%);
-  border-radius: 16px;
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  box-shadow: 0 0 30px rgba(0,0,0,0.55);
+  padding: 20px;
+  background: radial-gradient(circle at top, #0d1220 0%, #02030a 70%);
+  border-radius: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow: 0 0 40px rgba(0,0,0,0.6);
 }
 
+/* =========================
+   HEADER
+========================= */
 .header {
   text-align: center;
 }
 
 .subtitle {
   margin-top: 4px;
-  font-size: 13px;
+  font-size: 14px;
   color: #9ca3af;
 }
 
 /* =========================
-   HOLD SECTIONS
+   HOLD PANEL (Matches Screenshot)
 ========================= */
 .hold-section {
   margin-top: 28px;
-  padding: 16px;
+  padding: 20px;
   border-radius: 14px;
-  background: rgba(15, 23, 42, 0.9); /* same dark glossy layer */
-  border: 1px solid rgba(75, 85, 99, 0.7);
+  background: linear-gradient(145deg, rgba(10,15,30,0.85), rgba(5,8,20,0.85));
+  border: 1px solid rgba(90, 105, 135, 0.45);
+  box-shadow: 0 0 20px rgba(0,0,0,0.35) inset;
 }
 
 .hold-section h2 {
   margin: 0 0 12px;
-  font-weight: 600;
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
 /* =========================
-   LEGEND
+   LEGEND (exact spacing)
 ========================= */
 .legend {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 12px;
-  color: #9ca3af;
-  margin-bottom: 16px;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  color: #c0c6d3;
 }
 
 .legend-item {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
 }
@@ -70,102 +76,79 @@ body {
   border: 1px solid #6b7280;
 }
 
-/* original nice blue+green AKE */
 .legend-box.container {
-  background: linear-gradient(135deg, #0ea5e9, #22c55e);
+  background: #00dbc2;
 }
 
-/* original orange pallets */
 .legend-box.pallet {
-  background: linear-gradient(135deg, #eab308, #f97316);
+  background: #ffc252;
 }
 
 .legend-box.disabled {
-  background: #020617;
-  border-color: #4b5563;
+  background: #233040;
 }
 
 /* =========================
-   FORWARD + AFT GRID WIDTHS
+   GRIDS
 ========================= */
-
-/* Forward: 9 AKE positions */
-.hold-section:nth-of-type(1) .deck-grid {
-  width: 750px;
-  margin: 0 auto;
-}
-
-/* Aft: 7 AKE positions */
-.hold-section:nth-of-type(2) .deck-grid {
-  width: 620px;
-  margin: 0 auto;
-}
+.hold-section:nth-of-type(1) .deck-grid { width: 750px; margin: 0 auto; }
+.hold-section:nth-of-type(2) .deck-grid { width: 620px; margin: 0 auto; }
 
 /* =========================
-   ROW LAYOUT
+   ROWS
 ========================= */
 .ake-row,
 .pallet-row {
-  width: 100%;
   display: flex;
-  flex-wrap: nowrap !important;
-  justify-content: flex-start;
   gap: 8px;
   margin-bottom: 10px;
 }
 
 /* =========================
-   SLOTS (Dark Theme Style)
+   SLOT BOXES (THE IMPORTANT PART)
 ========================= */
 .slot {
-  height: 45px;
-  background: #0f172a;               /* dark glossy blue */
-  border: 1px solid #4b5563;
+  width: 70px;
+  height: 46px;
+  background: #0f172a;                 /* EXACT glossy dark blue */
+  border: 1px solid #364155;           /* Correct border color */
   border-radius: 8px;
-  color: #e5e7eb;
+  color: #cfd6e4;
   display: flex;
-  align-items: center;
   justify-content: center;
-  position: relative;
-  cursor: pointer;
+  align-items: center;
   font-size: 13px;
+  position: relative;
+  transition: 0.15s;
 }
 
 .slot::before {
   content: attr(data-pos);
   position: absolute;
-  top: 2px;
-  left: 4px;
+  top: 3px;
+  left: 5px;
   font-size: 10px;
-  color: #9ca3af;
+  color: #98a4b7;
 }
 
-/* Uniform AKE */
-.slot.ake {
-  width: 70px;
-}
+/* PALLET WIDTH (uniform) */
+.slot.pallet { width: 110px; }
 
-/* Uniform pallet width */
-.slot.pallet {
-  width: 110px;
-}
-
-/* Disabled positions (blocked) */
-.slot.disabled {
-  opacity: 0.28;
-  pointer-events: none;
-  background: #1e293b;
-}
-
-/* When ULD is placed */
+/* HIGHLIGHT ON CLICKED AKE/PALLET */
 .slot.has-uld {
+  background: rgba(30, 255, 180, 0.12);
   border-color: #22c55e;
-  background: rgba(34, 197, 94, 0.15);
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.35);
+}
+
+/* DISABLED POSITIONS */
+.slot.disabled {
+  opacity: 0.3;
+  pointer-events: none;
 }
 
 /* =========================
-   CONTROLS & EXPORT
+   CONTROLS
 ========================= */
 .controls {
   margin-top: 20px;
@@ -174,27 +157,28 @@ body {
 }
 
 .controls button {
-  background: #111827;
-  border: 1px solid #4b5563;
-  color: #e5e7eb;
+  background: #0f172a;
+  border: 1px solid #475569;
+  color: #e2e8f0;
   padding: 8px 16px;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 13px;
+  transition: 0.2s;
 }
 
-#clear-btn {
-  border-color: #ef4444;
+.controls button:hover {
+  background: #1e293b;
 }
+
+#clear-btn { border-color: #ef4444; }
 
 .output-section textarea {
   width: 100%;
   min-height: 160px;
   background: #020617;
-  border-radius: 10px;
-  border: 1px solid #4b5563;
+  border: 1px solid #475569;
+  border-radius: 8px;
   padding: 10px;
-  color: #f9fafb;
+  color: #e5e7eb;
   font-size: 12px;
-  resize: vertical;
 }
