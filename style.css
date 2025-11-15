@@ -1,89 +1,118 @@
-/* Base */
+/* =========================
+   Global
+========================= */
 body {
   margin: 0;
   padding: 0;
-  font-family: system-ui, sans-serif;
   background: #050509;
   color: #f5f5f5;
+  font-family: system-ui, sans-serif;
 }
 
 .app {
   max-width: 1100px;
-  margin: 20px auto;
+  margin: auto;
   padding: 16px;
   background: radial-gradient(circle at top, #111827 0, #020617 70%);
   border-radius: 16px;
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  border: 1px solid rgba(148,163,184,0.3);
 }
 
 .header {
   text-align: center;
 }
 
-/* Section */
-.hold-section {
-  margin-top: 32px;
-  background: rgba(15, 23, 42, 0.85);
-  padding: 18px;
-  border-radius: 14px;
-  border: 1px solid rgba(75, 85, 99, 0.7);
+.subtitle {
+  color: #9ca3af;
 }
 
+/* =========================
+   Sections
+========================= */
+.hold-section {
+  margin-top: 28px;
+  padding: 16px;
+  border: 1px solid rgba(75,85,99,0.6);
+  border-radius: 14px;
+  background: rgba(15,23,42,0.85);
+}
+
+/* =========================
+   FIXED DECK WIDTH
+========================= */
+.deck-grid {
+  width: 820px;       /* EXACT pallet deck width calculated */
+  margin: auto;
+}
+
+/* =========================
+   Rows
+========================= */
 .ake-row,
 .pallet-row {
+  width: 100%;
   display: flex;
+  flex-wrap: nowrap !important;
+  justify-content: flex-start;
   gap: 6px;
   margin-bottom: 8px;
 }
 
-/* Slot base */
+/* =========================
+   Slot Base
+========================= */
 .slot {
   height: 45px;
-  border-radius: 8px;
+  background: #0f172a;
   border: 1px solid #4b5563;
+  border-radius: 8px;
+  color: #e5e7eb;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #e5e7eb;
-  background: #0f172a;
   position: relative;
   cursor: pointer;
 }
 
 .slot::before {
   content: attr(data-pos);
+  font-size: 10px;
   position: absolute;
   top: 2px;
   left: 4px;
-  font-size: 10px;
   color: #9ca3af;
 }
 
-/* AKE WIDTH (BASE 1 UNIT) */
+/* AKE WIDTH */
 .slot.ake {
   width: 60px;
 }
 
-/* PALLET REAL WIDTHS (FORWARD) */
+/* =========================
+   REAL PALLET WIDTHS
+========================= */
+
+/* Forward */
 .slot[data-pos="24P"] { width: 159px; }
 .slot[data-pos="23P"] { width: 159px; }
 .slot[data-pos="22P"] { width: 123px; }
-.slot[data-pos="21P"] { width: 99px;  }
+.slot[data-pos="21P"] { width:  99px; }
 .slot[data-pos="12P"] { width: 123px; }
 .slot[data-pos="11P"] { width: 123px; }
 
-/* AFT PALLETS REAL WIDTHS */
+/* Aft */
 .slot[data-pos="42P"] { width: 123px; }
 .slot[data-pos="41P"] { width: 123px; }
 .slot[data-pos="33P"] { width: 123px; }
 .slot[data-pos="32P"] { width: 123px; }
-.slot[data-pos="31P"] { width: 60px; }
+.slot[data-pos="31P"] { width:  60px; }
 
-/* Highlight */
-
+/* =========================
+   States
+========================= */
 .slot.has-uld {
   border-color: #22c55e;
-  box-shadow: 0 0 8px rgba(34, 197, 94, 0.45);
+  box-shadow: 0 0 8px rgba(34,197,94,0.4);
 }
 
 .slot.disabled {
@@ -91,6 +120,9 @@ body {
   pointer-events: none;
 }
 
+/* =========================
+   Controls
+========================= */
 .controls {
   margin-top: 20px;
   display: flex;
@@ -100,23 +132,23 @@ body {
 .controls button {
   background: #111827;
   border: 1px solid #4b5563;
+  color: #e5e7eb;
   padding: 8px 16px;
   border-radius: 999px;
-  color: #e5e7eb;
   cursor: pointer;
 }
 
-#clear-btn {
-  border-color: #ef4444;
-}
+#clear-btn { border-color: #ef4444; }
 
+/* =========================
+   Export Output
+========================= */
 .output-section textarea {
   width: 100%;
-  min-height: 140px;
+  min-height: 150px;
   background: #020617;
-  border-radius: 8px;
-  margin-top: 10px;
   border: 1px solid #4b5563;
-  color: white;
+  border-radius: 10px;
   padding: 10px;
+  color: white;
 }
