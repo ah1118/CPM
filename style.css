@@ -40,7 +40,7 @@ body {
 }
 
 .hold-section h2 {
-  margin: 0 0 8px;
+  margin: 0 0 12px;
 }
 
 /* =========================
@@ -52,7 +52,7 @@ body {
   gap: 12px;
   font-size: 12px;
   color: #9ca3af;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .legend-item {
@@ -82,10 +82,18 @@ body {
 }
 
 /* =========================
-   DECK GRID (fixed width)
+   DECK GRID 
 ========================= */
-.deck-grid {
-  width: 750px;          /* Perfect alignment width */
+
+/* FORWARD HOLD GRID WIDTH — 9 containers */
+.hold-section:nth-of-type(1) .deck-grid {
+  width: 750px;
+  margin: 0 auto;
+}
+
+/* AFT HOLD GRID WIDTH — 7 containers */
+.hold-section:nth-of-type(2) .deck-grid {
+  width: 620px;
   margin: 0 auto;
 }
 
@@ -103,7 +111,7 @@ body {
 }
 
 /* =========================
-   SLOTS
+   SLOT BOXES
 ========================= */
 .slot {
   height: 48px;
@@ -129,18 +137,17 @@ body {
 }
 
 /* =========================
-   SCHEMATIC WIDTHS 
-   (Matches real LIR drawing)
+   AKE SLOTS (UNIFORM SIZE)
 ========================= */
-
-/* AKE = ALL SAME */
 .slot.ake {
-  width: 70px; /* uniform container width */
+  width: 70px;
 }
 
-/* PALLET = ALL SAME (schematic) */
+/* =========================
+   PALLET SLOTS (UNIFORM SIZE)
+========================= */
 .slot.pallet {
-  width: 110px; /* uniform pallet width */
+  width: 110px;
 }
 
 /* =========================
@@ -152,12 +159,12 @@ body {
 }
 
 .slot.disabled {
-  opacity: 0.25;
+  opacity: 0.28;
   pointer-events: none;
 }
 
 /* =========================
-   CONTROLS & OUTPUT
+   CONTROLS & EXPORT
 ========================= */
 .controls {
   margin-top: 20px;
@@ -180,12 +187,12 @@ body {
 }
 
 .output-section {
-  margin-top: 18px;
+  margin-top: 22px;
 }
 
 .output-section textarea {
   width: 100%;
-  min-height: 150px;
+  min-height: 160px;
   background: #020617;
   border-radius: 10px;
   border: 1px solid #4b5563;
