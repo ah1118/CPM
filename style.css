@@ -1,0 +1,264 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #050509;
+  color: #f5f5f5;
+}
+
+.app {
+  max-width: 1100px;
+  margin: 20px auto 40px;
+  padding: 0 16px 32px;
+  background: radial-gradient(circle at top, #111827 0, #020617 55%);
+  border-radius: 18px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.header {
+  text-align: center;
+  padding: 24px 16px 8px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: 0.04em;
+}
+
+.subtitle {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+main {
+  padding: 0 16px 24px;
+}
+
+/* Sections */
+.hold-section {
+  margin-top: 24px;
+  padding: 16px 14px 18px;
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 14px;
+  border: 1px solid rgba(75, 85, 99, 0.7);
+}
+
+.hold-section h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: #e5e7eb;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  margin-bottom: 10px;
+  color: #9ca3af;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-box {
+  width: 18px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1px solid #6b7280;
+}
+
+.legend-box.container {
+  background: linear-gradient(135deg, #0ea5e9, #22c55e);
+}
+
+.legend-box.pallet {
+  background: linear-gradient(135deg, #eab308, #f97316);
+}
+
+.legend-box.disabled {
+  background: #111827;
+  border-color: #4b5563;
+}
+
+/* Layout */
+.hold-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+
+.hold-column {
+  flex: 1 1 320px;
+}
+
+.row-label {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Slots */
+.slot {
+  width: 48px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #e5e7eb;
+  background: radial-gradient(circle at top left, #1f2937 0, #020617 65%);
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, border-color 0.1s ease, background 0.1s ease;
+}
+
+.slot::before {
+  /* position label (e.g., 26L) */
+  content: attr(data-pos);
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 9px;
+  color: #9ca3af;
+}
+
+/* Pallet styling */
+.pallet-slot {
+  background: radial-gradient(circle at top left, #1f2937 0, #111827 60%);
+}
+
+/* Hover / active */
+.slot:hover:not(.disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+  border-color: #38bdf8;
+}
+
+.slot.has-uld {
+  border-color: #22c55e;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.5);
+}
+
+.slot.has-uld.pallet-slot {
+  border-color: #f59e0b;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.55);
+}
+
+/* Disabled */
+.slot.disabled {
+  cursor: not-allowed;
+  background: #020617;
+  color: #4b5563;
+  border-color: #374151;
+  box-shadow: none;
+}
+
+.slot.disabled::before {
+  color: #4b5563;
+}
+
+/* Pallet row */
+.pallet-row {
+  margin-top: 8px;
+}
+
+/* Controls & Output */
+.controls {
+  margin-top: 26px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.controls button {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background: #111827;
+  color: #e5e7eb;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.1s ease, transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.controls button:hover {
+  background: #1f2937;
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+}
+
+#clear-btn {
+  border-color: #ef4444;
+}
+
+#clear-btn:hover {
+  background: #7f1d1d;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.45);
+}
+
+.export-hint {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* Export output */
+.output-section {
+  margin-top: 18px;
+}
+
+.output-section h2 {
+  font-size: 15px;
+  margin-bottom: 6px;
+  color: #e5e7eb;
+}
+
+#export-output {
+  width: 100%;
+  min-height: 140px;
+  border-radius: 10px;
+  border: 1px solid #4b5563;
+  background: #020617;
+  padding: 10px;
+  color: #e5e7eb;
+  font-size: 12px;
+  resize: vertical;
+}
+
+/* Mobile tweaks */
+@media (max-width: 600px) {
+  .slot {
+    width: 40px;
+    height: 32px;
+    font-size: 10px;
+  }
+
+  .row {
+    gap: 4px;
+  }
+
+  .hold-section {
+    padding: 12px 10px 14px;
+  }
+}
