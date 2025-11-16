@@ -36,7 +36,6 @@ body {
   flex-direction: column;
   gap: 18px;
 
-  /* Sidebar never explodes vertically */
   max-height: 95vh;
   overflow: hidden;
 }
@@ -63,30 +62,29 @@ body {
   background: #38bdf8;
 }
 
+/* Scrollable load list */
 .load-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-
-  /* FIX: Prevent sidebar from stretching */
   max-height: 390px;
   overflow-y: auto;
-  padding-right: 6px; /* avoid hide behind scrollbar */
+  padding-right: 6px;
+  gap: 4px !important; /* ultra compact spacing */
 }
 
 /* =========================
-   COMPACT LOAD ROW
+   ULTRA COMPACT LOAD ROW
 ========================= */
 
 .load-row {
   display: flex;
-  gap: 6px;
   align-items: center;
-  background: rgba(25, 35, 60, 0.7);
-  padding: 6px 8px;              /* smaller vertical padding */
-  border-radius: 6px;            /* slightly smaller corners */
+  gap: 4px;
+  background: rgba(25, 35, 60, 0.65);
+  padding: 4px 6px;
+  border-radius: 6px;
   border: 1px solid rgba(70, 90, 120, 0.35);
-  height: 38px;                  /* compact row height */
+  height: 30px;
 }
 
 .load-row select,
@@ -95,28 +93,29 @@ body {
   color: #e2e8f0;
   border: 1px solid #475569;
   border-radius: 5px;
-  padding: 4px 6px;              /* smaller */
-  font-size: 12px;               /* compact */
-  height: 26px;                  /* perfect small height */
-}
-
-.load-row input {
-  width: 85px;
+  padding: 0px 6px !important;
+  font-size: 12px;
+  height: 22px !important;
+  line-height: 22px !important;
 }
 
 .load-row select {
-  width: 70px;
+  width: 65px;
+}
+
+.load-row input {
+  width: 80px;
 }
 
 .delete-load {
   background: #ef4444;
   color: white;
   border: none;
-  padding: 2px 6px;              /* smaller */
+  padding: 0px 6px !important;
   border-radius: 5px;
   cursor: pointer;
   font-size: 11px;
-  height: 26px;
+  height: 22px !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -241,7 +240,6 @@ body {
   transition: 0.12s ease-out;
 }
 
-/* label above slot */
 .slot::before {
   content: attr(data-pos);
   position: absolute;
