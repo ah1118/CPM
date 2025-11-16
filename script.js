@@ -1,37 +1,38 @@
 /* ==========================================================
-   GLOBAL DATA STORAGE
+   IMPORT AIRCRAFT FILE
 ========================================================== */
-
 import { EC_NOG } from "./ec-nog.js";
 
+/* ==========================================================
+   GLOBAL DATA STORAGE
+========================================================== */
 let loads = [];
 let loadCounter = 1;
-let draggingULD = null;     // for drag & drop reference
-
+let draggingULD = null;
 
 /* ==========================================================
-   LOAD AIRCRAFT CONFIG (EC-NOG)
+   EXTRACT AIRCRAFT DATA FROM ec-nog.js
 ========================================================== */
-
+const layout = EC_NOG.layout;
 const containerPositions = EC_NOG.containerPositions;
 const palletPositions = EC_NOG.palletPositions;
 const palletBlocks = EC_NOG.palletBlocks;
 
-// Reverse mapping: container -> pallets blocking it
+/* Reverse blocking: which pallets block a container? */
 const containerBlocks = {};
-for (const [p, contList] of Object.entries(palletBlocks)) {
+for (const [pallet, contList] of Object.entries(palletBlocks)) {
   contList.forEach(c => {
     if (!containerBlocks[c]) containerBlocks[c] = [];
-    containerBlocks[c].push(p);
+    containerBlocks[c].push(pallet);
   });
 }
-
 
 /* ==========================================================
    INITIALIZE
 ========================================================== */
-
 window.addEventListener("DOMContentLoaded", () => {
+  buildDeck();
+
   document.getElementById("addLoadBtn").addEventListener("click", addLoadRow);
   document.getElementById("clear-btn").addEventListener("click", clearAllLoads);
   document.getElementById("export-btn").addEventListener("click", exportLayout);
@@ -39,11 +40,53 @@ window.addEventListener("DOMContentLoaded", () => {
   updateCargoDeck();
 });
 
+/* ==========================================================
+   BUILD FULL DECK FROM AIRCRAFT LAYOUT
+========================================================== */
+function buildDeck() {
+  const deckContainer = document.getElementById("deckContainer");
+  deckContainer.innerHTML = "";
+
+  deckContainer.appendChild(buildSection("FORWARD HOLD", layout.forward));
+  deckContainer.appendChild(buildSection("AFT HOLD", layout.aft));
+}
+
+function buildSection(title, sectionData) {
+  const section = document.createElement("section");
+  section.className = "hold-section";
+
+  const h2 = document.createElement("h2");
+  h2.innerText = title;
+  section.appendChild(h2);
+
+  const grid = document.createElement("div");
+  grid.className = "deck-grid";
+  section.appendChild(grid);
+
+  grid.appendChild(buildRow(sectionData.akeLeft, "ake-row", "ake"));
+  grid.appendChild(buildRow(sectionData.akeRight, "ake-row", "ake"));
+  grid.appendChild(buildRow(sectionData.pallet, "pallet-row", "pallet"));
+
+  return section;
+}
+
+function buildRow(positionList, rowClass, slotClass) {
+  const row = document.createElement("div");
+  row.className = rowClass;
+
+  positionList.forEach(pos => {
+    const slot = document.createElement("div");
+    slot.className = `slot ${slotClass}`;
+    slot.dataset.pos = pos;
+    row.appendChild(slot);
+  });
+
+  return row;
+}
 
 /* ==========================================================
-   ADD LOAD ROW
+   ADD LOAD
 ========================================================== */
-
 function addLoadRow() {
   const list = document.getElementById("loadList");
 
@@ -69,19 +112,15 @@ function addLoadRow() {
 
   list.appendChild(row);
 
-  // initial dropdown = container positions
   updatePositionDropdown(row, "AKE");
 
-  // attach handlers
   row.querySelector(".load-type").addEventListener("change", onLoadTypeChanged);
   row.querySelector(".load-pos").addEventListener("change", onLoadUpdated);
   row.querySelector(".load-uldid").addEventListener("input", onLoadUpdated);
-
   row.querySelector(".delete-load").addEventListener("click", () => {
     deleteLoad(row.dataset.loadid);
   });
 
-  // save load object
   loads.push({
     id: loadCounter,
     type: "AKE",
@@ -92,10 +131,21 @@ function addLoadRow() {
   loadCounter++;
 }
 
-
 /* ==========================================================
-   UPDATE POSITION DROPDOWN WHEN TYPE CHANGES
+   POSITION DROPDOWN UPDATE
 ========================================================== */
+function updatePositionDropdown(row, type) {
+  const posSelect = row.querySelector(".load-pos");
+  posSelect.innerHTML = "";
+
+  const options =
+    (type === "AKE" || type === "AKN") ? containerPositions : palletPositions;
+
+  posSelect.innerHTML = `
+    <option value="">--POS--</option>
+    ${options.map(p => `<option value="${p}">${p}</option>`).join("")}
+  `;
+}
 
 function onLoadTypeChanged(e) {
   const row = e.target.closest(".load-row");
@@ -104,144 +154,103 @@ function onLoadTypeChanged(e) {
 
   const load = loads.find(l => l.id === id);
   load.type = type;
-
-  // reset incompatible pos
   load.position = "";
-  row.querySelector(".load-pos").value = "";
 
-  // rebuild dropdown
+  row.querySelector(".load-pos").value = "";
   updatePositionDropdown(row, type);
 
   updateCargoDeck();
 }
 
-function updatePositionDropdown(row, type) {
-  const posSelect = row.querySelector(".load-pos");
-  posSelect.innerHTML = ""; // clear
-
-  let options;
-
-  if (type === "AKE" || type === "AKN") {
-    options = containerPositions;
-  } else {
-    options = palletPositions;
-  }
-
-  posSelect.innerHTML = `
-    <option value="">--POS--</option>
-    ${options.map(p => `<option value="${p}">${p}</option>`).join("")}
-  `;
-}
-
-
 /* ==========================================================
-   LOAD UPDATED (ANY CHANGE)
+   LOAD UPDATED
 ========================================================== */
-
 function onLoadUpdated(e) {
   const row = e.target.closest(".load-row");
   const id = parseInt(row.dataset.loadid);
 
-  const type = row.querySelector(".load-type").value.trim();
+  const type = row.querySelector(".load-type").value;
   const uldid = row.querySelector(".load-uldid").value.trim().toUpperCase();
   const pos = row.querySelector(".load-pos").value;
 
   const load = loads.find(l => l.id === id);
+
   load.type = type;
   load.uldid = uldid;
   load.position = pos;
 
-  // blocking logic check
   if (pos && isPositionBlocked(load)) {
     alert(`Position ${pos} is blocked by another ULD.`);
     row.querySelector(".load-pos").value = "";
     load.position = "";
-    updateCargoDeck();
-    return;
   }
 
   updateCargoDeck();
 }
 
-
 /* ==========================================================
    BLOCKING CHECK
 ========================================================== */
-
 function isPositionBlocked(load) {
   if (!load.position) return false;
 
   const pos = load.position;
-  const type = load.type;
 
-  if (["PAG", "PMC", "PAJ"].includes(type)) {
-    const blocks = palletBlocks[pos] || [];
-    for (const c of blocks) {
-      if (slotOccupied(c)) return true;
-    }
+  if (["PAG","PMC","PAJ"].includes(load.type)) {
+    return (palletBlocks[pos] || []).some(c => slotOccupied(c));
   }
 
-  if (["AKE", "AKN"].includes(type)) {
-    const pallets = containerBlocks[pos] || [];
-    for (const p of pallets) {
-      if (slotOccupied(p)) return true;
-    }
+  if (["AKE","AKN"].includes(load.type)) {
+    return (containerBlocks[pos] || []).some(p => slotOccupied(p));
   }
 
   return false;
 }
 
 function slotOccupied(position) {
-  return loads.some(l => l.position === position && l.uldid !== "");
+  return loads.some(l => l.position === position && l.uldid);
 }
 
-
 /* ==========================================================
-   RENDER CARGO DECK
+   RENDER DECK
 ========================================================== */
-
 function updateCargoDeck() {
-  // reset all slots
   document.querySelectorAll(".slot").forEach(slot => {
     slot.innerHTML = "";
     slot.classList.remove("has-uld");
   });
 
-  // place loads
   for (const load of loads) {
-    if (load.position && load.uldid) {
-      const slot = document.querySelector(`.slot[data-pos="${load.position}"]`);
-      if (slot) {
-        // create ULD box
-        const box = document.createElement("div");
-        box.className = "uld-box";
-        box.innerText = load.uldid;
-        box.dataset.position = load.position;
-        box.dataset.uldType = load.type;
+    if (!load.position || !load.uldid) continue;
 
-        slot.appendChild(box);
-        slot.classList.add("has-uld");
+    const slot = document.querySelector(`.slot[data-pos="${load.position}"]`);
+    if (!slot) continue;
 
-        makeULDdraggable(box);
-      }
-    }
+    const box = document.createElement("div");
+    box.className = "uld-box";
+    box.innerText = load.uldid;
+    box.dataset.position = load.position;
+    box.dataset.uldType = load.type;
+
+    slot.appendChild(box);
+    slot.classList.add("has-uld");
+
+    makeULDdraggable(box);
   }
 
   applyBlockingVisuals();
 }
 
-
 /* ==========================================================
-   APPLY BLOCKING VISUALS
+   BLOCKING VISUALS
 ========================================================== */
-
 function applyBlockingVisuals() {
   document.querySelectorAll(".slot").forEach(s => s.classList.remove("disabled"));
 
   for (const load of loads) {
     if (!load.position) continue;
 
-    if (["PAG", "PMC", "PAJ"].includes(load.type)) {
+    if (["PAG","PMC","PAJ"].includes(load.type)) {
       (palletBlocks[load.position] || []).forEach(disableSlot);
     } else {
       (containerBlocks[load.position] || []).forEach(disableSlot);
@@ -249,60 +258,48 @@ function applyBlockingVisuals() {
   }
 }
 
-function disableSlot(position) {
-  const slot = document.querySelector(`.slot[data-pos="${position}"]`);
+function disableSlot(pos) {
+  const slot = document.querySelector(`.slot[data-pos="${pos}"]`);
   if (slot) slot.classList.add("disabled");
 }
-
 
 /* ==========================================================
    DELETE LOAD
 ========================================================== */
-
 function deleteLoad(id) {
   loads = loads.filter(l => l.id !== parseInt(id));
   document.querySelector(`.load-row[data-loadid="${id}"]`).remove();
   updateCargoDeck();
 }
 
-
 /* ==========================================================
    CLEAR ALL
 ========================================================== */
-
 function clearAllLoads() {
   if (!confirm("Clear ALL loads?")) return;
-
   loads = [];
   document.getElementById("loadList").innerHTML = "";
   updateCargoDeck();
 }
 
-
 /* ==========================================================
    EXPORT
 ========================================================== */
-
 function exportLayout() {
-  let out = "LIR EXPORT\n================\n\n";
+  let text = "LIR EXPORT\n====================\n\n";
 
   for (const l of loads) {
-    if (l.position && l.uldid) {
-      out += `${l.position}: ${l.uldid}\n`;
-    }
+    if (l.position && l.uldid) text += `${l.position}: ${l.uldid}\n`;
   }
 
-  navigator.clipboard.writeText(out);
-  alert("Copied to clipboard!");
+  navigator.clipboard.writeText(text);
+  alert("Copied to clipboard");
 }
 
-
 /* ==========================================================
-   DRAG & DROP (A1 MODE)
+   DRAG & DROP
 ========================================================== */
-
 function makeULDdraggable(box) {
-
   box.addEventListener("mousedown", e => {
     draggingULD = box;
     box.classList.add("dragging");
@@ -324,31 +321,17 @@ function makeULDdraggable(box) {
     document.removeEventListener("mouseup", dragEnd);
 
     const targetSlot = document.elementFromPoint(e.clientX, e.clientY)?.closest(".slot");
-
-    if (!targetSlot) {
-      return resetDrag();
-    }
+    if (!targetSlot) return resetDrag();
 
     const newPos = targetSlot.dataset.pos;
-    const uldType = draggingULD.dataset.uldType;
+    const type = draggingULD.dataset.uldType;
 
-    // invalid slot type
-    if (!isValidSlotType(uldType, newPos)) {
-      return resetDrag();
-    }
+    if (!isValidSlot(type, newPos)) return resetDrag();
+    if (targetSlot.classList.contains("has-uld")) return resetDrag();
 
-    // already full
-    if (targetSlot.classList.contains("has-uld")) {
-      return resetDrag();
-    }
-
-    // blocked
     const occupied = loads.map(l => l.position);
-    if (isBlocked(newPos, occupied)) {
-      return resetDrag();
-    }
+    if (isBlocked(newPos, occupied)) return resetDrag();
 
-    // MOVE ULD
     moveULD(draggingULD, targetSlot);
 
     draggingULD.classList.remove("dragging");
@@ -366,25 +349,21 @@ function makeULDdraggable(box) {
   }
 }
 
-
 /* ==========================================================
-   DRAG HELPERS
+   DRAG HIGHLIGHTING
 ========================================================== */
-
 function highlightSlots(type) {
   document.querySelectorAll(".slot").forEach(slot => {
-    const pos = slot.dataset.pos;
-
     slot.style.outline = "none";
     slot.style.opacity = "1";
 
-    if (slot.classList.contains("disabled")) {
-      slot.style.outline = "2px solid #dc2626";
+    if (!isValidSlot(type, slot.dataset.pos)) {
       slot.style.opacity = "0.25";
       return;
     }
 
-    if (!isValidSlotType(type, pos)) {
+    if (slot.classList.contains("disabled")) {
+      slot.style.outline = "2px solid #dc2626";
       slot.style.opacity = "0.25";
       return;
     }
@@ -402,45 +381,40 @@ function clearHighlights() {
   });
 }
 
-
-function isValidSlotType(uldType, pos) {
+/* ==========================================================
+   VALIDATION HELPERS
+========================================================== */
+function isValidSlot(type, pos) {
   const isP = pos.endsWith("P");
   const isC = !isP;
 
-  if (["AKE", "AKN"].includes(uldType) && isC) return true;
-  if (["PAG", "PMC", "PAJ"].includes(uldType) && isP) return true;
-
+  if (["AKE", "AKN"].includes(type) && isC) return true;
+  if (["PAG", "PMC", "PAJ"].includes(type) && isP) return true;
   return false;
 }
 
 function isBlocked(pos, occupied) {
-  return palletBlocks[pos]?.some(p => occupied.includes(p)) || false;
+  const blockedByP = (palletBlocks[pos] || []).some(p => occupied.includes(p));
+  const blockedByC = (containerBlocks[pos] || []).some(c => occupied.includes(c));
+  return blockedByP || blockedByC;
 }
 
-
 /* ==========================================================
-   MOVE ULD TO NEW SLOT
+   MOVE ULD
 ========================================================== */
-
 function moveULD(box, targetSlot) {
   const oldPos = box.dataset.position;
 
-  // remove old slot state
   const oldSlot = document.querySelector(`.slot[data-pos="${oldPos}"]`);
   if (oldSlot) oldSlot.classList.remove("has-uld");
 
-  // apply new position
   targetSlot.classList.add("has-uld");
   box.dataset.position = targetSlot.dataset.pos;
-
-  // attach box inside new slot
   targetSlot.appendChild(box);
 
-  // update loads[]
   const load = loads.find(l => l.uldid === box.innerText);
   if (load) load.position = box.dataset.position;
 
-  // reset css
   box.style.position = "relative";
   box.style.left = "0";
   box.style.top = "0";
