@@ -74,14 +74,19 @@ body {
   padding-right: 6px; /* avoid hide behind scrollbar */
 }
 
+/* =========================
+   COMPACT LOAD ROW
+========================= */
+
 .load-row {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   align-items: center;
-  background: rgba(25, 35, 60, 0.8);
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(70, 90, 120, 0.45);
+  background: rgba(25, 35, 60, 0.7);
+  padding: 6px 8px;              /* smaller vertical padding */
+  border-radius: 6px;            /* slightly smaller corners */
+  border: 1px solid rgba(70, 90, 120, 0.35);
+  height: 38px;                  /* compact row height */
 }
 
 .load-row select,
@@ -89,27 +94,32 @@ body {
   background: #0f172a;
   color: #e2e8f0;
   border: 1px solid #475569;
-  border-radius: 6px;
-  padding: 5px;
-  font-size: 13px;
+  border-radius: 5px;
+  padding: 4px 6px;              /* smaller */
+  font-size: 12px;               /* compact */
+  height: 26px;                  /* perfect small height */
 }
 
 .load-row input {
-  width: 90px;
+  width: 85px;
 }
 
 .load-row select {
-  width: 75px;
+  width: 70px;
 }
 
 .delete-load {
   background: #ef4444;
   color: white;
   border: none;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 2px 6px;              /* smaller */
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar-buttons {
