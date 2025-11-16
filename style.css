@@ -35,6 +35,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 18px;
+
+  /* Sidebar never explodes vertically */
+  max-height: 95vh;
+  overflow: hidden;
 }
 
 .sidebar h2 {
@@ -63,6 +67,11 @@ body {
   display: flex;
   flex-direction: column;
   gap: 14px;
+
+  /* FIX: Prevent sidebar from stretching */
+  max-height: 390px;
+  overflow-y: auto;
+  padding-right: 6px; /* avoid hide behind scrollbar */
 }
 
 .load-row {
