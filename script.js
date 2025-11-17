@@ -231,7 +231,7 @@ function updatePositionDropdown(row, type) {
         : palletPositions;
 
     sel.innerHTML = `
-        <option value="">--POS--</option>
+        <option value="">POS</option>
         ${list.map(p => `<option value="${p}">${p}</option>`).join("")}
     `;
 }
