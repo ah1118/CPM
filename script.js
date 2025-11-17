@@ -16,10 +16,7 @@ const aircraft = {
         aft: {
             akeLeft:  ["43L","42L","41L","34L","33L","32L","31L"],
             akeRight: ["43R","42R","41R","34R","33R","32R","31R"],
-            pallet:   ["42P","41P","33P","32P","31P"],
-
-            // ✅ NEW BULK ROW
-            bulk: ["53", "52", "51"]
+            pallet:   ["42P","41P","33P","32P","31P"]
         }
     },
 
@@ -42,7 +39,6 @@ const aircraft = {
         "21P": ["22L","22R","21L","21R"],
         "12P": ["13L","13R","12L","12R"],
         "11P": ["12L","12R","11L","11R"],
-
         "42P": ["43L","43R","42L","42R"],
         "41P": ["42L","42R","41L","41R"],
         "33P": ["34L","34R","33L","33R"],
@@ -125,33 +121,23 @@ function makeHoldSection(name, cfg) {
     const grid = document.createElement("div");
     grid.className = name.includes("AFT") ? "deck-grid aft-grid" : "deck-grid";
 
-    // AKE LEFT
     const L = document.createElement("div");
     L.className = "ake-row";
     cfg.akeLeft.forEach(p => L.appendChild(makeSlot(p, "ake")));
-    grid.appendChild(L);
 
-    // AKE RIGHT
     const R = document.createElement("div");
     R.className = "ake-row";
     cfg.akeRight.forEach(p => R.appendChild(makeSlot(p, "ake")));
-    grid.appendChild(R);
 
-    // PALLET ROW
     const P = document.createElement("div");
     P.className = "pallet-row";
     cfg.pallet.forEach(p => P.appendChild(makeSlot(p, "pallet")));
+
+    grid.appendChild(L);
+    grid.appendChild(R);
     grid.appendChild(P);
-
-    // ✅ NEW BULK ROW (IF EXISTS)
-    if (cfg.bulk) {
-        const B = document.createElement("div");
-        B.className = "pallet-row";
-        cfg.bulk.forEach(pos => B.appendChild(makeSlot(pos, "bulk")));
-        grid.appendChild(B);
-    }
-
     wrap.appendChild(grid);
+
     return wrap;
 }
 
@@ -164,7 +150,7 @@ function makeSlot(pos, type) {
 
 
 /* ==========================================================
-   ADD LOAD ROW WITH TEMPLATE
+   ADD LOAD ROW — USING TEMPLATE (NO HTML IN JS)
 ========================================================== */
 
 function addLoadRow() {
@@ -203,7 +189,7 @@ function addLoadRow() {
 
 
 /* ==========================================================
-   LOAD EDIT
+   LOAD EDIT HANDLER
 ========================================================== */
 
 function onLoadEdited(e) {
@@ -252,7 +238,7 @@ function updatePositionDropdown(row, type) {
 
 
 /* ==========================================================
-   BLOCKING
+   BLOCKING LOGIC
 ========================================================== */
 
 function isPosBlocked(load) {
@@ -261,6 +247,7 @@ function isPosBlocked(load) {
     if (["PAG","PMC","PAJ"].includes(load.type)) {
         return palletBlocks[load.position]?.some(c => isSlotUsed(c));
     }
+
     return containerBlocks[load.position]?.some(p => isSlotUsed(p));
 }
 
@@ -328,7 +315,7 @@ function markDisabled(pos) {
 
 
 /* ==========================================================
-   DRAG & DROP
+   DRAG & DROP LOGIC
 ========================================================== */
 
 function makeULDdraggable(box) {
@@ -338,7 +325,6 @@ function makeULDdraggable(box) {
         draggingULD = box;
 
         const oldPos = box.dataset.position;
-
         const oldSlot = document.querySelector(`.slot[data-pos="${oldPos}"]`);
         if (oldSlot) oldSlot.removeChild(box);
 
@@ -367,8 +353,7 @@ function makeULDdraggable(box) {
 
         if (!draggingULD) return;
 
-        let best = null;
-        let bestDist = Infinity;
+        let best = null, bestDist = Infinity;
 
         document.querySelectorAll(".slot").forEach(slot => {
             const r = slot.getBoundingClientRect();
@@ -376,10 +361,7 @@ function makeULDdraggable(box) {
             const cy = r.top + r.height/2;
 
             const d = Math.hypot(e.clientX - cx, e.clientY - cy);
-            if (d < bestDist) {
-                bestDist = d;
-                best = slot;
-            }
+            if (d < bestDist) bestDist = d, best = slot;
         });
 
         if (
@@ -447,10 +429,7 @@ function highlightSlots(type) {
             (["AKE","AKN"].includes(type) && !isP) ||
             (["PAG","PMC","PAJ"].includes(type) && isP);
 
-        if (!valid) {
-            slot.style.opacity = "0.25";
-            return;
-        }
+        if (!valid) { slot.style.opacity = "0.25"; return; }
 
         if (slot.classList.contains("disabled")) {
             slot.style.opacity = "0.25";
