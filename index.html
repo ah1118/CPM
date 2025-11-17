@@ -15,10 +15,9 @@
   <aside class="sidebar">
     <h2>Load Builder</h2>
 
-    <label>Select Aircraft:</label>
-    <select id="aircraftSelect">
-      <option value="ec-nog">EC-NOG (A330)</option>
-    </select>
+    <!-- Aircraft is fixed (EC-NOG), no dropdown needed -->
+    <label>Aircraft Loaded:</label>
+    <div class="aircraft-fixed">EC-NOG (A330-200F)</div>
 
     <button id="addLoadBtn" class="add-load-btn">+ Add Load</button>
 
@@ -34,7 +33,7 @@
       <p class="subtitle">Dynamic Layout · Real AKE/PAG widths · Blocking logic</p>
     </header>
 
-    <!-- IMPORTANT: DECK GOES HERE -->
+    <!-- DECK RENDERS HERE -->
     <div id="deckContainer"></div>
 
     <!-- BLACK BAR UNDER AFT HOLD -->
@@ -56,6 +55,8 @@
   </div>
 </div>
 
-<script type="module" src="script.js"></script>
+<!-- IMPORTANT: NO MODULE TYPE -->
+<script src="script.js"></script>
+
 </body>
 </html>
