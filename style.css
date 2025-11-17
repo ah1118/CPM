@@ -101,10 +101,10 @@ body {
   color: #e2e8f0;
 }
 
-.load-type { width: 90px; }
-.load-uldid { width: 110px; }
-.load-bulk { width: 70px; }
-.load-pos  { width: 95px; }
+.load-type { width: 45px; }
+.load-uldid { width: 50px; }
+.load-bulk { width: 30px; }
+.load-pos  { width: 30px; }
 
 .delete-load {
   width: 40px;
