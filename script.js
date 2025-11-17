@@ -7,9 +7,7 @@ const aircraft = {
     registration: "EC-NOG",
     type: "A330-200F",
 
-    /* --------------  LAYOUT (visual rows) -------------- */
     layout: {
-
         forward: {
             akeLeft:  ["26L","25L","24L","23L","22L","21L","13L","12L","11L"],
             akeRight: ["26R","25R","24R","23R","22R","21R","13R","12R","11R"],
@@ -23,7 +21,6 @@ const aircraft = {
         }
     },
 
-    /* --------------  POSITION LISTS -------------- */
     containerPositions: [
         "26L","25L","24L","23L","22L","21L","13L","12L","11L",
         "26R","25R","24R","23R","22R","21R","13R","12R","11R",
@@ -36,7 +33,6 @@ const aircraft = {
         "42P","41P","33P","32P","31P"
     ],
 
-    /* --------------  BLOCKING LOGIC -------------- */
     palletBlocks: {
         "24P": ["26L","26R","25L","25R"],
         "23P": ["25L","25R","24L","24R"],
@@ -44,7 +40,6 @@ const aircraft = {
         "21P": ["22L","22R","21L","21R"],
         "12P": ["13L","13R","12L","12R"],
         "11P": ["12L","12R","11L","11R"],
-
         "42P": ["43L","43R","42L","42R"],
         "41P": ["42L","42R","41L","41R"],
         "33P": ["34L","34R","33L","33R"],
@@ -70,37 +65,34 @@ let containerBlocks = {};
 
 
 /* ==========================================================
-   INITIALIZE (LOAD EC-NOG DIRECTLY)
+   INITIALIZE
 ========================================================== */
 
 window.addEventListener("DOMContentLoaded", () => {
 
-    // AUTO-LOAD EC-NOG (NO IMPORTS)
     loadAircraftProfile();
 
     document.getElementById("addLoadBtn").addEventListener("click", addLoadRow);
     document.getElementById("export-btn").addEventListener("click", exportLayout);
     document.getElementById("clear-btn").addEventListener("click", clearAllLoads);
-    document.getElementById("closeModal").addEventListener("click", () => {
-        document.getElementById("exportModal").classList.add("hidden");
-    });
+    document.getElementById("closeModal").addEventListener("click", () =>
+        document.getElementById("exportModal").classList.add("hidden")
+    );
 });
 
 
-
 /* ==========================================================
-   LOAD AIRCRAFT (INTERNAL)
+   LOAD AIRCRAFT
 ========================================================== */
 
 function loadAircraftProfile() {
-
     const ac = aircraft;
 
     containerPositions = ac.containerPositions;
     palletPositions = ac.palletPositions;
     palletBlocks = ac.palletBlocks;
 
-    // Reverse block map for AKE
+    // reverse blocking (AKE <-> pallet)
     containerBlocks = {};
     for (const [p, list] of Object.entries(palletBlocks)) {
         list.forEach(c => {
@@ -164,7 +156,7 @@ function makeSlot(pos, type) {
 
 
 /* ==========================================================
-   SIDEBAR ROW MANAGEMENT
+   SIDEBAR — ADD ROW
 ========================================================== */
 
 function addLoadRow() {
@@ -185,7 +177,6 @@ function addLoadRow() {
 
         <input type="text" class="load-uldid" placeholder="ULD">
 
-        <!-- NEW FIELD -->
         <select class="load-bulk">
             <option value="BY" selected>BY</option>
             <option value="FKT">FKT</option>
@@ -202,31 +193,37 @@ function addLoadRow() {
 
     row.querySelector(".load-type").addEventListener("change", onTypeChanged);
     row.querySelector(".load-uldid").addEventListener("input", onLoadEdited);
-    row.querySelector(".load-bulk").addEventListener("change", onLoadEdited); // NEW
+    row.querySelector(".load-bulk").addEventListener("change", onLoadEdited);
     row.querySelector(".load-pos").addEventListener("change", onLoadEdited);
 
     row.querySelector(".delete-load").addEventListener("click", () =>
         deleteLoad(row.dataset.loadid)
     );
 
-    loads.push({ 
-        id: loadCounter, 
-        type: "AKE", 
-        uldid: "", 
-        bulk: "BY",       // NEW
-        position: "" 
+    loads.push({
+        id: loadCounter,
+        type: "AKE",
+        uldid: "",
+        bulk: "BY",
+        position: ""
     });
 
     loadCounter++;
 }
 
 
+
+/* ==========================================================
+   LOAD EDIT HANDLER (FINAL + CLEAN)
+========================================================== */
+
+function onLoadEdited(e) {
     const row = e.target.closest(".load-row");
     const load = loads.find(l => l.id == row.dataset.loadid);
 
     load.type = row.querySelector(".load-type").value;
     load.uldid = row.querySelector(".load-uldid").value.toUpperCase().trim();
-    load.bulk = row.querySelector(".load-bulk").value;   // NEW
+    load.bulk = row.querySelector(".load-bulk").value;
     load.position = row.querySelector(".load-pos").value;
 
     if (load.position && isPosBlocked(load)) {
@@ -237,6 +234,8 @@ function addLoadRow() {
 
     updateCargoDeck();
 }
+
+
 
 function onTypeChanged(e) {
     const row = e.target.closest(".load-row");
@@ -266,7 +265,7 @@ function updatePositionDropdown(row, type) {
 
 
 /* ==========================================================
-   LOAD UPDATE + BLOCKING
+   BLOCKING LOGIC
 ========================================================== */
 
 function isPosBlocked(load) {
@@ -285,7 +284,7 @@ function isSlotUsed(pos) {
 
 
 /* ==========================================================
-   RENDER ULDs INSIDE SLOTS
+   RENDER ULDs
 ========================================================== */
 
 function updateCargoDeck() {
@@ -347,7 +346,7 @@ function markDisabled(pos) {
 
 
 /* ==========================================================
-   DRAGGING SYSTEM — PERFECT CURSOR CENTERED
+   DRAG & DROP (NO FLICKER)
 ========================================================== */
 
 function makeULDdraggable(box) {
@@ -359,24 +358,12 @@ function makeULDdraggable(box) {
 
         const oldPos = box.dataset.position;
 
-        /* ----------------------------------------------
-           🔥 HARD FIX for flicker:
-           Remove from slot BEFORE any DOM movement
-        ---------------------------------------------- */
         const oldSlot = document.querySelector(`.slot[data-pos="${oldPos}"]`);
-        if (oldSlot && oldSlot.contains(box)) {
-            oldSlot.removeChild(box);
-            oldSlot.classList.remove("has-uld");
-        }
+        if (oldSlot) oldSlot.removeChild(box);
 
-        /* ----------------------------------------------
-           Now add to BODY BEFORE positioning
-        ---------------------------------------------- */
         document.body.appendChild(box);
 
         box.classList.add("dragging");
-
-        // Start exactly at cursor immediately
         box.style.position = "fixed";
         box.style.left = e.clientX + "px";
         box.style.top = e.clientY + "px";
@@ -424,7 +411,6 @@ function makeULDdraggable(box) {
         }
 
         draggingULD.classList.remove("dragging");
-
         draggingULD.style.position = "";
         draggingULD.style.left = "";
         draggingULD.style.top = "";
@@ -437,13 +423,14 @@ function makeULDdraggable(box) {
     }
 }
 
+
+
 /* ==========================================================
-   SLOT TYPE VALIDATION
+   SLOT TYPE CHECK
 ========================================================== */
 
 function isCorrectSlotType(type, pos) {
     const isP = pos.endsWith("P");
-
     return (
         (["AKE","AKN"].includes(type) && !isP) ||
         (["PAG","PMC","PAJ"].includes(type) && isP)
@@ -453,15 +440,10 @@ function isCorrectSlotType(type, pos) {
 
 
 /* ==========================================================
-   MOVE ULD TO NEW SLOT
+   MOVE ULD
 ========================================================== */
 
 function moveULD(box, slot) {
-
-    const old = box.dataset.position;
-
-    const oldSlot = document.querySelector(`.slot[data-pos="${old}"]`);
-    if (oldSlot) oldSlot.classList.remove("has-uld");
 
     slot.appendChild(box);
     slot.classList.add("has-uld");
@@ -475,7 +457,7 @@ function moveULD(box, slot) {
 
 
 /* ==========================================================
-   HIGHLIGHT SLOTS
+   HIGHLIGHT LOGIC
 ========================================================== */
 
 function highlightSlots(type) {
@@ -519,7 +501,7 @@ function clearHighlights() {
 
 
 /* ==========================================================
-   DELETE LOAD ROW
+   DELETE LOAD
 ========================================================== */
 
 function deleteLoad(id) {
@@ -545,7 +527,7 @@ function clearAllLoads() {
 
 
 /* ==========================================================
-   EXPORT LIR FORMAT
+   EXPORT LIR
 ========================================================== */
 
 function exportLayout() {
@@ -553,7 +535,7 @@ function exportLayout() {
 
     loads.forEach(l => {
         if (l.uldid && l.position)
-            txt += `${l.position}: ${l.uldid}\n`;
+            txt += `${l.position}: ${l.uldid} (${l.bulk})\n`;
     });
 
     const out = document.getElementById("export-output");
