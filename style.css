@@ -2,6 +2,10 @@
    GLOBAL LAYOUT
 ========================= */
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -21,13 +25,12 @@ body {
   gap: 20px;
 }
 
-
 /* =========================
    LEFT SIDEBAR
 ========================= */
 
 .sidebar {
-  width: 330px;                       /* Increased slightly for perfect row fit */
+  width: 360px; /* EXPANDED FIXED WIDTH → NO SCROLLBAR */
   background: rgba(10, 18, 35, 0.82);
   border-radius: 14px;
   padding: 18px;
@@ -63,7 +66,7 @@ body {
 /* Add Load Button */
 .add-load-btn {
   width: 100%;
-  padding: 10px;
+  padding: 11px;
   background: #0ea5e9;
   color: #ffffff;
   border-radius: 8px;
@@ -76,7 +79,6 @@ body {
   background: #38bdf8;
 }
 
-
 /* =========================
    LOAD LIST
 ========================= */
@@ -84,35 +86,34 @@ body {
 .load-list {
   display: flex;
   flex-direction: column;
-  align-items: center;           /* Ensures rows are centered */
-  width: 100%;
+  gap: 12px;
+
+  max-height: 380px;
   overflow-y: auto;
-  padding-right: 4px;
-  max-height: 550px;             /* Adjust if needed */
+  overflow-x: hidden !important; /* 🔥 Fix scrollbar */
+  padding-right: 6px;
 }
 
-
 /* =========================
-   LOAD ROW (PERFECT CENTER)
+   LOAD ROW (COMPACT)
 ========================= */
 
 .load-row {
-  width: calc(100% - 20px);      /* Fits perfectly inside box */
-  max-width: 310px;
-  box-sizing: border-box;
-  margin: 0 auto;
-
   display: flex;
-  gap: 8px;
+  justify-content: center;  /* 🔥 Center inside row */
+  gap: 10px;
   align-items: center;
+
   background: rgba(25, 35, 60, 0.65);
   padding: 8px 10px;
-  border-radius: 10px;           /* Now fully visible */
+  border-radius: 10px;     /* 🔥 Fix rounded corners */
   border: 1px solid rgba(70, 90, 120, 0.35);
+
+  width: 100%;             /* 🔥 FULL WIDTH */
+  max-width: 100%;         /* 🔥 Prevent overflow */
+  overflow: hidden;        /* 🔥 No scrollbars ever */
+  min-height: 44px;
 }
-
-
-/* Inputs + Dropdowns in row */
 
 .load-row select,
 .load-row input {
@@ -120,41 +121,49 @@ body {
   color: #e2e8f0;
   border: 1px solid #475569;
   border-radius: 6px;
-  padding: 3px 5px;
-  font-size: 12px;
-  height: 26px;
+  padding: 4px 7px;
+  font-size: 13px;
+  height: 30px;
 }
 
 .load-row select {
-  width: 70px;
+  width: 80px;
 }
 
 .load-row input {
-  flex: 1;
-  min-width: 80px;
+  width: 110px;
 }
 
+/* BY / FKT dropdown */
 .load-row select.load-bulk {
-  width: 50px;
+  width: 60px !important; /* 🔥 Clean design */
+  min-width: 60px !important;
 }
 
+/* POS dropdown */
+.load-row select.load-pos {
+  width: 80px !important;
+  min-width: 80px !important;
+}
+
+/* Delete Button */
 .delete-load {
   background: #ef4444;
   color: white;
   border: none;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 5px 9px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 12px;
-  height: 26px;
+  font-size: 13px;
+  height: 30px;
+
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-
 /* =========================
-   CARGO AREA
+   CARGO AREA (RIGHT PANEL)
 ========================= */
 
 .cargo-area {
@@ -182,14 +191,14 @@ body {
   font-size: 13px;
 }
 
+/* Deck container */
+#deckContainer {
+  position: relative;
+}
 
 /* =========================
    HOLD SECTIONS
 ========================= */
-
-#deckContainer {
-  position: relative;
-}
 
 .hold-section {
   margin-top: 28px;
@@ -198,12 +207,6 @@ body {
   border-radius: 14px;
   border: 1px solid rgba(75, 85, 99, 0.6);
 }
-
-.hold-section h2 {
-  margin: 0 0 10px;
-  color: #ffffff;
-}
-
 
 /* =========================
    SLOT GRID
@@ -225,13 +228,13 @@ body {
   margin-bottom: 10px;
 }
 
-
 /* =========================
    SLOTS
 ========================= */
 
 .slot {
   height: 48px;
+  width: 70px;
   border-radius: 10px;
   display: flex;
   justify-content: center;
@@ -242,7 +245,6 @@ body {
   transition: 0.12s ease-out;
 }
 
-/* Label above slot */
 .slot::before {
   content: attr(data-pos);
   position: absolute;
@@ -251,30 +253,18 @@ body {
   color: #8ea0c5;
 }
 
-/* AKE slot */
 .slot.ake {
-  width: 70px;
   background: #112037;
   border: 1px solid rgba(0, 180, 255, 0.45);
-  box-shadow: inset 0 0 6px rgba(0, 200, 255, 0.12),
-              0 0 6px rgba(0, 200, 255, 0.22);
-}
-.slot.ake.has-uld {
-  background: rgba(0, 200, 255, 0.15);
-  border-color: #22c55e;
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
+  box-shadow:
+    inset 0 0 6px rgba(0, 200, 255, 0.12),
+    0 0 6px rgba(0, 200, 255, 0.22);
 }
 
-/* Pallet slot */
 .slot.pallet {
   width: 110px;
   background: #0f172a;
   border: 1px solid rgba(180, 150, 120, 0.45);
-}
-.slot.pallet.has-uld {
-  background: rgba(200, 160, 120, 0.18);
-  border-color: #22c55e;
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
 }
 
 .slot.disabled {
@@ -282,7 +272,6 @@ body {
   pointer-events: none;
   border-color: #475569 !important;
 }
-
 
 /* =========================
    ULD BOX
@@ -298,7 +287,6 @@ body {
   cursor: grab;
   user-select: none;
   white-space: nowrap;
-  transition: 0.1s ease-out;
 }
 
 .uld-box.dragging {
@@ -308,44 +296,6 @@ body {
   transform: scale(1.1);
   box-shadow: 0 0 14px rgba(0, 200, 255, 0.55);
 }
-
-
-/* =========================
-   BLACK BUTTON BAR
-========================= */
-
-.cargo-buttons-bar {
-  width: 100%;
-  margin-top: 20px;
-  background: rgba(5,5,10,0.92);
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #334155;
-
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.cargo-buttons-bar button {
-  padding: 10px 20px;
-  background: #111827;
-  border: 1px solid #475569;
-  border-radius: 8px;
-  cursor: pointer;
-  color: #e5e7eb;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.cargo-buttons-bar button:hover {
-  background: #1e293b;
-}
-
-.cargo-buttons-bar .danger {
-  border-color: #ef4444;
-}
-
 
 /* =========================
    EXPORT MODAL
@@ -374,11 +324,6 @@ body {
   text-align: center;
 }
 
-.modal-content h3 {
-  margin-bottom: 10px;
-  color: #e2e8f0;
-}
-
 #export-output {
   width: 100%;
   height: 150px;
@@ -388,9 +333,9 @@ body {
   border-radius: 8px;
   padding: 10px;
   margin-bottom: 15px;
-  font-size: 13px;
 }
 
+/* Close Button */
 #closeModal {
   padding: 8px 16px;
   background: #1e293b;
