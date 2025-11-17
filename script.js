@@ -300,8 +300,17 @@ function exportLayout() {
    DRAG & DROP
 ========================================================== */
 function makeULDdraggable(box) {
+
+  let offsetX = 0;
+  let offsetY = 0;
+
   box.addEventListener("mousedown", e => {
     draggingULD = box;
+
+    const rect = box.getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+
     box.classList.add("dragging");
 
     highlightSlots(box.dataset.uldType);
@@ -312,8 +321,8 @@ function makeULDdraggable(box) {
 
   function dragMove(e) {
     draggingULD.style.position = "absolute";
-    draggingULD.style.left = e.pageX - 40 + "px";
-    draggingULD.style.top = e.pageY - 20 + "px";
+    draggingULD.style.left = (e.pageX - offsetX) + "px";
+    draggingULD.style.top  = (e.pageY - offsetY) + "px";
   }
 
   function dragEnd(e) {
@@ -321,19 +330,17 @@ function makeULDdraggable(box) {
     document.removeEventListener("mouseup", dragEnd);
 
     const targetSlot = document.elementFromPoint(e.clientX, e.clientY)?.closest(".slot");
+
     if (!targetSlot) return resetDrag();
 
     const newPos = targetSlot.dataset.pos;
-    const type = draggingULD.dataset.uldType;
+    const uldType = draggingULD.dataset.uldType;
 
-    if (!isValidSlot(type, newPos)) return resetDrag();
+    if (!isValidSlotType(uldType, newPos)) return resetDrag();
     if (targetSlot.classList.contains("has-uld")) return resetDrag();
-
-    const occupied = loads.map(l => l.position);
-    if (isBlocked(newPos, occupied)) return resetDrag();
+    if (isBlocked(newPos, loads.map(l => l.position))) return resetDrag();
 
     moveULD(draggingULD, targetSlot);
-
     draggingULD.classList.remove("dragging");
     draggingULD = null;
     clearHighlights();
