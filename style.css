@@ -146,6 +146,9 @@ body {
   border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.25);
   box-shadow: 0 0 30px rgba(0,0,0,0.55);
+
+  /* FIX DRAGGING ISSUE */
+  position: relative;
 }
 
 .cargo-area .header {
@@ -162,6 +165,11 @@ body {
   color: #9ca3af;
   font-size: 13px;
   margin-top: 4px;
+}
+
+/* Deck container MUST be positioned */
+#deckContainer {
+  position: relative;
 }
 
 /* =========================
@@ -304,7 +312,7 @@ body {
 }
 
 /* =========================
-   BLACK BUTTON BAR (NEW)
+   BLACK BUTTON BAR
 ========================= */
 
 .cargo-buttons-bar {
