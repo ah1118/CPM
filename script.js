@@ -68,7 +68,7 @@ window.addEventListener("DOMContentLoaded", () => {
         document.getElementById("exportModal").classList.add("hidden");
     });
 
-    loadAircraftProfile("EC-NOG");
+    loadAircraftProfile("ec-nog");
 });
 
 
