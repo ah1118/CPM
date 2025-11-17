@@ -1,321 +1,266 @@
 /* ==========================================================
-   IMPORT AIRCRAFT FILE
+   GLOBALS
 ========================================================== */
-import { EC_NOG } from "./ec-nog.js";
 
-/* ==========================================================
-   GLOBAL DATA STORAGE
-========================================================== */
 let loads = [];
 let loadCounter = 1;
 let draggingULD = null;
 
-/* ==========================================================
-   EXTRACT AIRCRAFT DATA FROM ec-nog.js
-========================================================== */
-const layout = EC_NOG.layout;
-const containerPositions = EC_NOG.containerPositions;
-const palletPositions = EC_NOG.palletPositions;
-const palletBlocks = EC_NOG.palletBlocks;
+let activeAircraft = null; // loaded aircraft data
+let containerPositions = [];
+let palletPositions = [];
+let palletBlocks = [];
+let containerBlocks = [];
 
-/* Reverse blocking: which pallets block a container? */
-const containerBlocks = {};
-for (const [pallet, contList] of Object.entries(palletBlocks)) {
-  contList.forEach(c => {
-    if (!containerBlocks[c]) containerBlocks[c] = [];
-    containerBlocks[c].push(pallet);
-  });
+
+/* ==========================================================
+   LOAD AIRCRAFT PROFILE
+========================================================== */
+
+async function loadAircraftProfile(name) {
+    try {
+        const module = await import(`./${name}.js`);
+
+        activeAircraft = module.aircraft;
+        containerPositions = module.containerPositions;
+        palletPositions = module.palletPositions;
+        palletBlocks = module.palletBlocks;
+        containerBlocks = module.containerBlocks;
+
+        console.log("Loaded aircraft:", activeAircraft.registration);
+
+        updateCargoDeck();
+
+    } catch (err) {
+        console.error("Failed to load aircraft:", name, err);
+    }
 }
+
 
 /* ==========================================================
    INITIALIZE
 ========================================================== */
+
 window.addEventListener("DOMContentLoaded", () => {
-  buildDeck();
 
-  document.getElementById("addLoadBtn").addEventListener("click", addLoadRow);
-  document.getElementById("clear-btn").addEventListener("click", clearAllLoads);
-  document.getElementById("export-btn").addEventListener("click", exportLayout);
+    const aircraftSelect = document.getElementById("aircraftSelect");
+    if (aircraftSelect) {
+        aircraftSelect.addEventListener("change", () => {
+            loadAircraftProfile(aircraftSelect.value);
+        });
+    }
 
-  updateCargoDeck();
+    document.getElementById("addLoadBtn").addEventListener("click", addLoadRow);
+    document.getElementById("clear-btn")?.addEventListener("click", clearAllLoads);
+    document.getElementById("export-btn")?.addEventListener("click", exportLayout);
+
+    loads = [];
+    loadCounter = 1;
+
+    loadAircraftProfile("ec-nog"); // default
 });
 
-/* ==========================================================
-   BUILD FULL DECK FROM AIRCRAFT LAYOUT
-========================================================== */
-function buildDeck() {
-  const deckContainer = document.getElementById("deckContainer");
-  deckContainer.innerHTML = "";
-
-  deckContainer.appendChild(buildSection("FORWARD HOLD", layout.forward));
-  deckContainer.appendChild(buildSection("AFT HOLD", layout.aft));
-}
-
-function buildSection(title, sectionData) {
-  const section = document.createElement("section");
-  section.className = "hold-section";
-
-  const h2 = document.createElement("h2");
-  h2.innerText = title;
-  section.appendChild(h2);
-
-  const grid = document.createElement("div");
-  grid.className = "deck-grid";
-  section.appendChild(grid);
-
-  grid.appendChild(buildRow(sectionData.akeLeft, "ake-row", "ake"));
-  grid.appendChild(buildRow(sectionData.akeRight, "ake-row", "ake"));
-  grid.appendChild(buildRow(sectionData.pallet, "pallet-row", "pallet"));
-
-  return section;
-}
-
-function buildRow(positionList, rowClass, slotClass) {
-  const row = document.createElement("div");
-  row.className = rowClass;
-
-  positionList.forEach(pos => {
-    const slot = document.createElement("div");
-    slot.className = `slot ${slotClass}`;
-    slot.dataset.pos = pos;
-    row.appendChild(slot);
-  });
-
-  return row;
-}
 
 /* ==========================================================
-   ADD LOAD
+   ADD LOAD ROW
 ========================================================== */
+
 function addLoadRow() {
-  const list = document.getElementById("loadList");
+    const list = document.getElementById("loadList");
 
-  const row = document.createElement("div");
-  row.className = "load-row";
-  row.dataset.loadid = loadCounter;
+    const row = document.createElement("div");
+    row.className = "load-row";
+    row.dataset.loadid = loadCounter;
 
-  row.innerHTML = `
-    <select class="load-type">
-      <option value="AKE">AKE</option>
-      <option value="AKN">AKN</option>
-      <option value="PAG">PAG</option>
-      <option value="PMC">PMC</option>
-      <option value="PAJ">PAJ</option>
-    </select>
+    row.innerHTML = `
+        <select class="load-type">
+          <option value="AKE">AKE</option>
+          <option value="AKN">AKN</option>
+          <option value="PAG">PAG</option>
+          <option value="PMC">PMC</option>
+          <option value="PAJ">PAJ</option>
+        </select>
 
-    <input type="text" class="load-uldid" placeholder="ULD ID">
+        <input type="text" class="load-uldid" placeholder="ULD ID">
 
-    <select class="load-pos"></select>
+        <select class="load-pos"></select>
+        <button class="delete-load">X</button>
+    `;
 
-    <button class="delete-load">X</button>
-  `;
+    list.appendChild(row);
 
-  list.appendChild(row);
+    updatePositionDropdown(row, "AKE");
 
-  updatePositionDropdown(row, "AKE");
+    row.querySelector(".load-type").addEventListener("change", onLoadTypeChanged);
+    row.querySelector(".load-pos").addEventListener("change", onLoadUpdated);
+    row.querySelector(".load-uldid").addEventListener("input", onLoadUpdated);
+    row.querySelector(".delete-load").addEventListener("click", () => {
+        deleteLoad(row.dataset.loadid);
+    });
 
-  row.querySelector(".load-type").addEventListener("change", onLoadTypeChanged);
-  row.querySelector(".load-pos").addEventListener("change", onLoadUpdated);
-  row.querySelector(".load-uldid").addEventListener("input", onLoadUpdated);
-  row.querySelector(".delete-load").addEventListener("click", () => {
-    deleteLoad(row.dataset.loadid);
-  });
+    loads.push({
+        id: loadCounter,
+        type: "AKE",
+        uldid: "",
+        position: ""
+    });
 
-  loads.push({
-    id: loadCounter,
-    type: "AKE",
-    uldid: "",
-    position: ""
-  });
-
-  loadCounter++;
+    loadCounter++;
 }
+
 
 /* ==========================================================
-   POSITION DROPDOWN UPDATE
+   UPDATE POSITION DROPDOWN
 ========================================================== */
-function updatePositionDropdown(row, type) {
-  const posSelect = row.querySelector(".load-pos");
-  posSelect.innerHTML = "";
-
-  const options =
-    (type === "AKE" || type === "AKN") ? containerPositions : palletPositions;
-
-  posSelect.innerHTML = `
-    <option value="">--POS--</option>
-    ${options.map(p => `<option value="${p}">${p}</option>`).join("")}
-  `;
-}
 
 function onLoadTypeChanged(e) {
-  const row = e.target.closest(".load-row");
-  const id = parseInt(row.dataset.loadid);
-  const type = e.target.value;
+    const row = e.target.closest(".load-row");
+    const id = parseInt(row.dataset.loadid);
+    const type = e.target.value;
 
-  const load = loads.find(l => l.id === id);
-  load.type = type;
-  load.position = "";
+    const load = loads.find(l => l.id === id);
+    load.type = type;
+    load.position = "";
 
-  row.querySelector(".load-pos").value = "";
-  updatePositionDropdown(row, type);
-
-  updateCargoDeck();
+    updatePositionDropdown(row, type);
+    updateCargoDeck();
 }
+
+function updatePositionDropdown(row, type) {
+    const select = row.querySelector(".load-pos");
+    select.innerHTML = "";
+
+    let positions = (type === "AKE" || type === "AKN") ? containerPositions : palletPositions;
+
+    select.innerHTML = `
+        <option value="">--POS--</option>
+        ${positions.map(p => `<option value="${p}">${p}</option>`).join("")}
+    `;
+}
+
 
 /* ==========================================================
    LOAD UPDATED
 ========================================================== */
+
 function onLoadUpdated(e) {
-  const row = e.target.closest(".load-row");
-  const id = parseInt(row.dataset.loadid);
+    const row = e.target.closest(".load-row");
+    const id = parseInt(row.dataset.loadid);
 
-  const type = row.querySelector(".load-type").value;
-  const uldid = row.querySelector(".load-uldid").value.trim().toUpperCase();
-  const pos = row.querySelector(".load-pos").value;
+    const type = row.querySelector(".load-type").value;
+    const uldid = row.querySelector(".load-uldid").value.toUpperCase().trim();
+    const pos = row.querySelector(".load-pos").value;
 
-  const load = loads.find(l => l.id === id);
+    const load = loads.find(l => l.id === id);
 
-  load.type = type;
-  load.uldid = uldid;
-  load.position = pos;
+    load.type = type;
+    load.uldid = uldid;
+    load.position = pos;
 
-  if (pos && isPositionBlocked(load)) {
-    alert(`Position ${pos} is blocked by another ULD.`);
-    row.querySelector(".load-pos").value = "";
-    load.position = "";
-  }
-
-  updateCargoDeck();
-}
-
-/* ==========================================================
-   BLOCKING CHECK
-========================================================== */
-function isPositionBlocked(load) {
-  if (!load.position) return false;
-
-  const pos = load.position;
-
-  if (["PAG","PMC","PAJ"].includes(load.type)) {
-    return (palletBlocks[pos] || []).some(c => slotOccupied(c));
-  }
-
-  if (["AKE","AKN"].includes(load.type)) {
-    return (containerBlocks[pos] || []).some(p => slotOccupied(p));
-  }
-
-  return false;
-}
-
-function slotOccupied(position) {
-  return loads.some(l => l.position === position && l.uldid);
-}
-
-/* ==========================================================
-   RENDER DECK
-========================================================== */
-function updateCargoDeck() {
-  document.querySelectorAll(".slot").forEach(slot => {
-    slot.innerHTML = "";
-    slot.classList.remove("has-uld");
-  });
-
-  for (const load of loads) {
-    if (!load.position || !load.uldid) continue;
-
-    const slot = document.querySelector(`.slot[data-pos="${load.position}"]`);
-    if (!slot) continue;
-
-    const box = document.createElement("div");
-    box.className = "uld-box";
-    box.innerText = load.uldid;
-    box.dataset.position = load.position;
-    box.dataset.uldType = load.type;
-
-    slot.appendChild(box);
-    slot.classList.add("has-uld");
-
-    makeULDdraggable(box);
-  }
-
-  applyBlockingVisuals();
-}
-
-/* ==========================================================
-   BLOCKING VISUALS
-========================================================== */
-function applyBlockingVisuals() {
-  document.querySelectorAll(".slot").forEach(s => s.classList.remove("disabled"));
-
-  for (const load of loads) {
-    if (!load.position) continue;
-
-    if (["PAG","PMC","PAJ"].includes(load.type)) {
-      (palletBlocks[load.position] || []).forEach(disableSlot);
-    } else {
-      (containerBlocks[load.position] || []).forEach(disableSlot);
+    if (pos && isPositionBlocked(load)) {
+        alert(`Position ${pos} is blocked.`);
+        row.querySelector(".load-pos").value = "";
+        load.position = "";
     }
-  }
+
+    updateCargoDeck();
+}
+
+
+/* ==========================================================
+   BLOCKING LOGIC
+========================================================== */
+
+function isPositionBlocked(load) {
+    if (!load.position) return false;
+
+    if (["PAG", "PMC", "PAJ"].includes(load.type)) {
+        return palletBlocks[load.position]?.some(x => slotOccupied(x)) || false;
+    } else {
+        return containerBlocks[load.position]?.some(x => slotOccupied(x)) || false;
+    }
+}
+
+function slotOccupied(pos) {
+    return loads.some(l => l.position === pos && l.uldid !== "");
+}
+
+
+/* ==========================================================
+   RENDER CARGO DECK
+========================================================== */
+
+function updateCargoDeck() {
+    document.querySelectorAll(".slot").forEach(s => {
+        s.innerHTML = "";
+        s.classList.remove("has-uld");
+    });
+
+    for (const load of loads) {
+        if (!load.position || !load.uldid) continue;
+
+        const slot = document.querySelector(`.slot[data-pos="${load.position}"]`);
+
+        if (slot) {
+            const box = document.createElement("div");
+            box.className = "uld-box";
+            box.textContent = load.uldid;
+            box.dataset.position = load.position;
+            box.dataset.uldType = load.type;
+
+            slot.appendChild(box);
+            slot.classList.add("has-uld");
+
+            makeULDdraggable(box);
+        }
+    }
+
+    applyBlockingVisuals();
+}
+
+
+/* ==========================================================
+   APPLY BLOCKING VISUALS
+========================================================== */
+
+function applyBlockingVisuals() {
+    document.querySelectorAll(".slot").forEach(s => s.classList.remove("disabled"));
+
+    for (const load of loads) {
+        if (!load.position) continue;
+
+        if (["PAG", "PMC", "PAJ"].includes(load.type)) {
+            palletBlocks[load.position]?.forEach(disableSlot);
+        } else {
+            containerBlocks[load.position]?.forEach(disableSlot);
+        }
+    }
 }
 
 function disableSlot(pos) {
-  const slot = document.querySelector(`.slot[data-pos="${pos}"]`);
-  if (slot) slot.classList.add("disabled");
+    const s = document.querySelector(`.slot[data-pos="${pos}"]`);
+    if (s) s.classList.add("disabled");
 }
 
-/* ==========================================================
-   DELETE LOAD
-========================================================== */
-function deleteLoad(id) {
-  loads = loads.filter(l => l.id !== parseInt(id));
-  document.querySelector(`.load-row[data-loadid="${id}"]`).remove();
-  updateCargoDeck();
-}
 
 /* ==========================================================
-   CLEAR ALL
-========================================================== */
-function clearAllLoads() {
-  if (!confirm("Clear ALL loads?")) return;
-  loads = [];
-  document.getElementById("loadList").innerHTML = "";
-  updateCargoDeck();
-}
-
-/* ==========================================================
-   EXPORT
-========================================================== */
-function exportLayout() {
-  let text = "LIR EXPORT\n====================\n\n";
-
-  for (const l of loads) {
-    if (l.position && l.uldid) text += `${l.position}: ${l.uldid}\n`;
-  }
-
-  navigator.clipboard.writeText(text);
-  alert("Copied to clipboard");
-}
-
-/* ==========================================================
-   NEW DRAG & DROP (accurate mouse tracking + boundaries)
+   DRAGGING — PERFECT CURSOR LOCK
 ========================================================== */
 
 function makeULDdraggable(box) {
 
     let offsetX = 0, offsetY = 0;
-    const cargo = document.querySelector(".cargo-area");
 
     box.addEventListener("mousedown", e => {
 
         draggingULD = box;
         box.classList.add("dragging");
 
-        // Move ULD to cargo-area for correct coordinate system
-        cargo.appendChild(box);
+        document.body.appendChild(box); // always drag relative to body
 
-        const r = box.getBoundingClientRect();
-        offsetX = e.clientX - r.left;
-        offsetY = e.clientY - r.top;
+        const rect = box.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
 
         highlightSlots(box.dataset.uldType);
 
@@ -323,43 +268,32 @@ function makeULDdraggable(box) {
         document.addEventListener("mouseup", dragEnd);
     });
 
-
     function dragMove(e) {
-
-        const crect = cargo.getBoundingClientRect();
-
         draggingULD.style.position = "absolute";
-
-        draggingULD.style.left =
-            (e.clientX - crect.left - offsetX) + "px";
-
-        draggingULD.style.top =
-            (e.clientY - crect.top - offsetY) + "px";
+        draggingULD.style.left = (e.pageX - offsetX) + "px";
+        draggingULD.style.top = (e.pageY - offsetY) + "px";
     }
 
-
     function dragEnd(e) {
-
         document.removeEventListener("mousemove", dragMove);
         document.removeEventListener("mouseup", dragEnd);
 
-        const target = document.elementFromPoint(e.clientX, e.clientY)?.closest(".slot");
+        const targetSlot = document.elementFromPoint(e.clientX, e.clientY)?.closest(".slot");
 
-        if (!target) return resetDrag();
+        if (!targetSlot) return resetDrag();
 
-        const newPos = target.dataset.pos;
-        const t = draggingULD.dataset.uldType;
+        const newPos = targetSlot.dataset.pos;
+        const uType = draggingULD.dataset.uldType;
 
-        if (!isValidSlotType(t, newPos)) return resetDrag();
-        if (target.classList.contains("has-uld")) return resetDrag();
+        if (!isValidSlotType(uType, newPos)) return resetDrag();
+        if (targetSlot.classList.contains("has-uld")) return resetDrag();
         if (isBlocked(newPos, loads.map(l => l.position))) return resetDrag();
 
-        moveULD(draggingULD, target);
+        moveULD(draggingULD, targetSlot);
         draggingULD.classList.remove("dragging");
         draggingULD = null;
         clearHighlights();
     }
-
 
     function resetDrag() {
         draggingULD.style.position = "relative";
@@ -373,72 +307,105 @@ function makeULDdraggable(box) {
 
 
 /* ==========================================================
-   DRAG HIGHLIGHTING
+   DRAG HELPERS
 ========================================================== */
+
 function highlightSlots(type) {
-  document.querySelectorAll(".slot").forEach(slot => {
-    slot.style.outline = "none";
-    slot.style.opacity = "1";
+    document.querySelectorAll(".slot").forEach(slot => {
+        slot.style.outline = "none";
+        slot.style.opacity = "1";
 
-    if (!isValidSlot(type, slot.dataset.pos)) {
-      slot.style.opacity = "0.25";
-      return;
-    }
+        const pos = slot.dataset.pos;
+        const isP = pos.endsWith("P");
 
-    if (slot.classList.contains("disabled")) {
-      slot.style.outline = "2px solid #dc2626";
-      slot.style.opacity = "0.25";
-      return;
-    }
+        if (slot.classList.contains("disabled")) {
+            slot.style.outline = "2px solid #dc2626";
+            slot.style.opacity = "0.25";
+            return;
+        }
 
-    if (!slot.classList.contains("has-uld")) {
-      slot.style.outline = "2px solid #22c55e";
-    }
-  });
+        const valid = (["AKE", "AKN"].includes(type) && !isP) ||
+                      (["PAG", "PMC", "PAJ"].includes(type) && isP);
+
+        if (!valid) {
+            slot.style.opacity = "0.25";
+            return;
+        }
+
+        if (!slot.classList.contains("has-uld")) {
+            slot.style.outline = "2px solid #22c55e";
+        }
+    });
 }
 
 function clearHighlights() {
-  document.querySelectorAll(".slot").forEach(slot => {
-    slot.style.outline = "none";
-    slot.style.opacity = "1";
-  });
+    document.querySelectorAll(".slot").forEach(s => {
+        s.style.outline = "none";
+        s.style.opacity = "1";
+    });
 }
 
-/* ==========================================================
-   VALIDATION HELPERS
-========================================================== */
-function isValidSlot(type, pos) {
-  const isP = pos.endsWith("P");
-  const isC = !isP;
-
-  if (["AKE", "AKN"].includes(type) && isC) return true;
-  if (["PAG", "PMC", "PAJ"].includes(type) && isP) return true;
-  return false;
+function isValidSlotType(uldType, pos) {
+    const isP = pos.endsWith("P");
+    return (
+        (["AKE", "AKN"].includes(uldType) && !isP) ||
+        (["PAG", "PMC", "PAJ"].includes(uldType) && isP)
+    );
 }
 
 function isBlocked(pos, occupied) {
-  const blockedByP = (palletBlocks[pos] || []).some(p => occupied.includes(p));
-  const blockedByC = (containerBlocks[pos] || []).some(c => occupied.includes(c));
-  return blockedByP || blockedByC;
+    return palletBlocks[pos]?.some(p => occupied.includes(p)) || false;
 }
+
 
 /* ==========================================================
    MOVE ULD
 ========================================================== */
+
 function moveULD(box, targetSlot) {
-  const oldPos = box.dataset.position;
+    const oldPos = box.dataset.position;
 
-  const oldSlot = document.querySelector(`.slot[data-pos="${oldPos}"]`);
-  if (oldSlot) oldSlot.classList.remove("has-uld");
+    const oldSlot = document.querySelector(`.slot[data-pos="${oldPos}"]`);
+    if (oldSlot) oldSlot.classList.remove("has-uld");
 
-  targetSlot.classList.add("has-uld");
-  box.dataset.position = targetSlot.dataset.pos;
-  targetSlot.appendChild(box);
+    targetSlot.appendChild(box);
+    targetSlot.classList.add("has-uld");
 
-  const load = loads.find(l => l.uldid === box.innerText);
-  if (load) load.position = box.dataset.position;
+    const load = loads.find(l => l.uldid === box.textContent);
+    if (load) load.position = targetSlot.dataset.pos;
 
-  box.style.position = "relative";
-  box.style.left = "0";
-  box.style.top = "0";
+    box.style.position = "relative";
+    box.style.left = "0";
+    box.style.top = "0";
+}
+
+
+/* ==========================================================
+   CLEAR ALL
+========================================================== */
+
+function clearAllLoads() {
+    if (!confirm("Clear ALL loads?")) return;
+
+    loads = [];
+    document.getElementById("loadList").innerHTML = "";
+
+    updateCargoDeck();
+}
+
+
+/* ==========================================================
+   EXPORT
+========================================================== */
+
+function exportLayout() {
+    let out = "LIR EXPORT\n====================\n\n";
+
+    for (const l of loads) {
+        if (l.uldid && l.position)
+            out += `${l.position}: ${l.uldid}\n`;
+    }
+
+    navigator.clipboard.writeText(out);
+    alert("Copied to clipboard!");
 }
