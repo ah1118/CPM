@@ -312,7 +312,6 @@ function makeULDdraggable(box) {
     offsetY = e.clientY - rect.top;
 
     box.classList.add("dragging");
-
     highlightSlots(box.dataset.uldType);
 
     document.addEventListener("mousemove", dragMove);
@@ -320,9 +319,12 @@ function makeULDdraggable(box) {
   });
 
   function dragMove(e) {
+    const container = document.querySelector(".cargo-area");
+    const crect = container.getBoundingClientRect();
+
     draggingULD.style.position = "absolute";
-    draggingULD.style.left = (e.pageX - offsetX) + "px";
-    draggingULD.style.top  = (e.pageY - offsetY) + "px";
+    draggingULD.style.left = (e.clientX - crect.left - offsetX) + "px";
+    draggingULD.style.top  = (e.clientY - crect.top  - offsetY) + "px";
   }
 
   function dragEnd(e) {
@@ -334,9 +336,9 @@ function makeULDdraggable(box) {
     if (!targetSlot) return resetDrag();
 
     const newPos = targetSlot.dataset.pos;
-    const uldType = draggingULD.dataset.uldType;
+    const uType = draggingULD.dataset.uldType;
 
-    if (!isValidSlotType(uldType, newPos)) return resetDrag();
+    if (!isValidSlotType(uType, newPos)) return resetDrag();
     if (targetSlot.classList.contains("has-uld")) return resetDrag();
     if (isBlocked(newPos, loads.map(l => l.position))) return resetDrag();
 
@@ -355,6 +357,7 @@ function makeULDdraggable(box) {
     draggingULD = null;
   }
 }
+
 
 /* ==========================================================
    DRAG HIGHLIGHTING
