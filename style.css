@@ -8,7 +8,7 @@ body {
   padding: 0;
   background: #050509;
   color: #ecf0f1;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   display: flex;
   justify-content: center;
 }
@@ -22,7 +22,7 @@ body {
 }
 
 /* =========================
-   LEFT SIDEBAR
+   SIDEBAR
 ========================= */
 .sidebar {
   width: 330px;
@@ -36,54 +36,45 @@ body {
   gap: 16px;
 }
 
-.sidebar h2 {
-  margin: 0 0 5px;
-  font-size: 18px;
-  color: #d1d5db;
-}
-
-/* =========================
-   ADD LOAD BUTTON
-========================= */
 .add-load-btn {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   background: #0ea5e9;
-  color: white;
-  border-radius: 8px;
+  color: #fff;
   border: none;
+  border-radius: 10px;
   cursor: pointer;
-  font-weight: 600;
   font-size: 14px;
+  font-weight: 600;
 }
-.add-load-btn:hover { background: #38bdf8; }
+.add-load-btn:hover {
+  background: #38bdf8;
+}
 
-/* =========================
-   ULD LIST
-========================= */
 .load-list {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  align-items: stretch;   /* FULL WIDTH FIX */
+  align-items: stretch;      /* IMPORTANT → full width rows */
 }
 
 /* =========================
-   LOAD ROW — FIXED VERSION
+   LOAD ROW — FINAL FIX
 ========================= */
 .load-row {
-  background: rgba(25, 35, 60, 0.85);
-  border: 1px solid rgba(70, 90, 120, 0.35);
-  border-radius: 12px;
-  display: flex;               /* FLEX FIX */
+  width: 100%;               /* FULL width always */
+  display: flex;
   align-items: center;
   gap: 10px;
+
+  background: rgba(25, 35, 60, 0.85);
   padding: 14px 16px;
-  width: 100%;                 /* FULL WIDTH */
+  border: 1px solid rgba(70, 90, 120, 0.35);
+  border-radius: 12px;
   min-height: 56px;
 }
 
-/* Inside controls auto-stretch */
+/* All inputs/selects uniform */
 .load-row select,
 .load-row input {
   background: #0f172a;
@@ -92,26 +83,28 @@ body {
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 13px;
+  height: auto;
 
-  flex: 1;          /* AUTO EXPAND INSIDE ROW */
-  min-width: 0;     /* PREVENT OVERFLOW */
+  flex: 1;                /* <- EXPAND correctly */
+  min-width: 0;           /* <- Prevent overflow */
 }
 
-/* Small fixed-width dropdowns */
+/* Fixed-size dropdowns */
 .load-row select.load-type { flex: 0 0 90px; }
 .load-row select.load-bulk { flex: 0 0 70px; }
-.load-row select.load-pos  { flex: 0 0 90px; }
+.load-row select.load-pos  { flex: 0 0 95px; }
 
 /* Delete button */
 .delete-load {
+  flex: 0 0 45px;
   background: #ef4444;
   color: white;
   border: none;
-  padding: 8px 14px;
   border-radius: 8px;
+  padding: 8px 0;
   cursor: pointer;
-  font-size: 14px;
   font-weight: 600;
+  font-size: 14px;
 }
 
 /* =========================
@@ -123,17 +116,18 @@ body {
   padding: 20px;
   border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.25);
-  box-shadow: 0 0 30px rgba(0,0,0,0.55);
 }
 
+/* Titles */
 .cargo-area h1 {
   margin: 0;
   font-size: 24px;
 }
 
 .subtitle {
-  color: #9ca3af;
+  margin-top: 4px;
   font-size: 13px;
+  color: #9ca3af;
 }
 
 /* =========================
@@ -177,13 +171,14 @@ body {
 .slot {
   height: 48px;
   border-radius: 10px;
+  background: #0f172a;
+  border: 1px solid #475569;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #dbe2f0;
   position: relative;
+  color: #dbe2f0;
   font-size: 13px;
-  transition: 0.12s ease-out;
 }
 
 .slot::before {
@@ -194,17 +189,8 @@ body {
   color: #8ea0c5;
 }
 
-.slot.ake {
-  width: 70px;
-  background: #112037;
-  border: 1px solid #2196f3;
-}
-
-.slot.pallet {
-  width: 110px;
-  background: #0f172a;
-  border: 1px solid #b48c64;
-}
+.slot.ake { width: 70px; border-color: #2196f3; }
+.slot.pallet { width: 110px; border-color: #b48c64; }
 
 .slot.has-uld {
   border-color: #22c55e;
@@ -217,32 +203,30 @@ body {
    ULD BOXES
 ========================= */
 .uld-box {
-  background: linear-gradient(to bottom right, #1e293b, #0f172a);
   padding: 5px 8px;
+  background: linear-gradient(to bottom right, #1e293b, #0f172a);
   border-radius: 6px;
   border: 1px solid #475569;
   color: #f1f5f9;
   font-size: 12px;
   cursor: grab;
-  user-select: none;
   white-space: nowrap;
 }
 
 .uld-box.dragging {
   opacity: 0.9;
   cursor: grabbing;
-  z-index: 9999;
   transform: scale(1.1);
+  z-index: 9999;
 }
 
 /* =========================
    BUTTON BAR
 ========================= */
 .cargo-buttons-bar {
-  width: 100%;
   margin-top: 20px;
-  background: rgba(5,5,10,0.92);
   padding: 15px;
+  background: rgba(5,5,10,0.92);
   border-radius: 10px;
   border: 1px solid #334155;
   display: flex;
@@ -252,10 +236,9 @@ body {
 
 .cargo-buttons-bar button {
   padding: 10px 20px;
+  border-radius: 8px;
   background: #111827;
   border: 1px solid #475569;
-  border-radius: 8px;
-  cursor: pointer;
   color: #e5e7eb;
   font-weight: 600;
 }
@@ -274,7 +257,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 5000;
+  z-index: 9999;
 }
 
 .modal.hidden { display: none; }
@@ -296,5 +279,4 @@ body {
   border-radius: 8px;
   padding: 10px;
   color: #e2e8f0;
-  margin-bottom: 12px;
 }
