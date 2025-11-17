@@ -128,8 +128,10 @@ body {
   padding: 8px 10px;
   border-radius: 10px;
   border: 1px solid rgba(70, 90, 120, 0.35);
-  overflow: hidden;               /* FIX for rounded corners */
-  height: 44px;                   /* Taller = more premium look */
+
+  overflow: hidden;       /* ⭐ CRITICAL FIX */
+  width: 100%;            /* ⭐ Ensures full rounded shape */
+  box-sizing: border-box; /* avoids overflow from padding */
 }
 
 /* All controls same height */
