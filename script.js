@@ -290,13 +290,18 @@ function disableSlot(pos) {
    PERFECT DRAGGING (NO OFFSET)
 ========================================================== */
 
+/* ==========================================================
+   PERFECT DRAGGABLE ULD SYSTEM (FINAL VERSION)
+========================================================== */
 function makeULDdraggable(box) {
 
     box.addEventListener("mousedown", e => {
+        e.preventDefault();
 
         draggingULD = box;
         box.classList.add("dragging");
 
+        // Move to body so it's free of slot constraints
         document.body.appendChild(box);
 
         highlightSlots(box.dataset.uldType);
@@ -305,48 +310,82 @@ function makeULDdraggable(box) {
         document.addEventListener("mouseup", dragEnd);
     });
 
+
+    /* -----------------------------
+       DRAG MOVEMENT (PERFECT FOLLOW)
+    ------------------------------ */
     function dragMove(e) {
+        const x = e.clientX;
+        const y = e.clientY;
+
         draggingULD.style.position = "fixed";
-        draggingULD.style.left = `${e.clientX}px`;
-        draggingULD.style.top = `${e.clientY}px`;
+        draggingULD.style.left = x + "px";
+        draggingULD.style.top = y + "px";
+
+        // Center ULD under cursor
         draggingULD.style.transform = "translate(-50%, -50%)";
     }
 
-    function dragEnd(e) {
 
+    /* -----------------------------
+       DROP HANDLING — NEAREST SLOT LOGIC (NEW)
+    ------------------------------ */
+    function dragEnd(e) {
         document.removeEventListener("mousemove", dragMove);
         document.removeEventListener("mouseup", dragEnd);
 
-        const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
+        if (!draggingULD) return;
 
+        let bestSlot = null;
+        let bestDist = 999999;
+
+        document.querySelectorAll(".slot").forEach(slot => {
+            const rect = slot.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+
+            const dx = e.clientX - cx;
+            const dy = e.clientY - cy;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestSlot = slot;
+            }
+        });
+
+        // Accept drop only if cursor is close enough
         if (
-            dropTarget &&
-            dropTarget.classList.contains("slot") &&
-            isValidSlotType(draggingULD.dataset.uldType, dropTarget.dataset.pos) &&
-            !dropTarget.classList.contains("disabled")
+            bestSlot &&
+            bestDist < 90 &&  // drop radius
+            isValidSlotType(draggingULD.dataset.uldType, bestSlot.dataset.pos) &&
+            !bestSlot.classList.contains("disabled")
         ) {
-            moveULD(draggingULD, dropTarget);
+            moveULD(draggingULD, bestSlot);
         }
 
         resetDrag();
     }
 
-    function resetDrag() {
 
+    /* -----------------------------
+       CLEAN RESET
+    ------------------------------ */
+    function resetDrag() {
         if (!draggingULD) return;
 
-        draggingULD.style.position = "";
-        draggingULD.style.left = "";
-        draggingULD.style.top = "";
-        draggingULD.style.transform = "";
+        draggingULD.style.position = "relative";
+        draggingULD.style.left = "0";
+        draggingULD.style.top = "0";
+        draggingULD.style.transform = "none";
 
         draggingULD.classList.remove("dragging");
+
         clearHighlights();
 
         draggingULD = null;
     }
 }
-
 
 /* ==========================================================
    DRAG HELPERS
