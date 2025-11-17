@@ -300,72 +300,61 @@ function exportLayout() {
    DRAG & DROP
 ========================================================== */
 function makeULDdraggable(box) {
+  let offsetX = 0;
+  let offsetY = 0;
 
-    let offsetX = 0;
-    let offsetY = 0;
+  box.addEventListener("mousedown", e => {
+    draggingULD = box;
 
-    box.addEventListener("mousedown", e => {
+    const r = box.getBoundingClientRect();
+    offsetX = e.clientX - r.left;
+    offsetY = e.clientY - r.top;
 
-        draggingULD = box;
+    box.classList.add("dragging");
+    highlightSlots(box.dataset.uldType);
 
-        const r = box.getBoundingClientRect();
-        offsetX = e.clientX - r.left;
-        offsetY = e.clientY - r.top;
+    document.addEventListener("mousemove", dragMove);
+    document.addEventListener("mouseup", dragEnd);
+  });
 
-        box.classList.add("dragging");
-        highlightSlots(box.dataset.uldType);
+  function dragMove(e) {
+    const cargo = document.querySelector(".cargo-area");
+    const crect = cargo.getBoundingClientRect();
 
-        document.addEventListener("mousemove", dragMove);
-        document.addEventListener("mouseup", dragEnd);
-    });
+    draggingULD.style.position = "absolute";
+    draggingULD.style.left = (e.clientX - crect.left - offsetX) + "px";
+    draggingULD.style.top  = (e.clientY - crect.top  - offsetY) + "px";
+  }
 
+  function dragEnd(e) {
+    document.removeEventListener("mousemove", dragMove);
+    document.removeEventListener("mouseup", dragEnd);
 
-    function dragMove(e) {
+    const target = document.elementFromPoint(e.clientX, e.clientY)?.closest(".slot");
 
-        const cargo = document.querySelector(".cargo-area");
-        const crect = cargo.getBoundingClientRect();
+    if (!target) return resetDrag();
 
-        draggingULD.style.position = "absolute";
+    const newPos = target.dataset.pos;
+    const uType  = draggingULD.dataset.uldType;
 
-        draggingULD.style.left = 
-            (e.clientX - crect.left - offsetX) + "px";
+    if (!isValidSlotType(uType, newPos)) return resetDrag();
+    if (target.classList.contains("has-uld")) return resetDrag();
+    if (isBlocked(newPos, loads.map(l => l.position))) return resetDrag();
 
-        draggingULD.style.top =
-            (e.clientY - crect.top - offsetY) + "px";
-    }
+    moveULD(draggingULD, target);
+    draggingULD.classList.remove("dragging");
+    draggingULD = null;
+    clearHighlights();
+  }
 
-
-    function dragEnd(e) {
-
-        document.removeEventListener("mousemove", dragMove);
-        document.removeEventListener("mouseup", dragEnd);
-
-        const target = document.elementFromPoint(e.clientX, e.clientY)?.closest(".slot");
-
-        if (!target) return resetDrag();
-
-        const newPos = target.dataset.pos;
-        const uType = draggingULD.dataset.uldType;
-
-        if (!isValidSlotType(uType, newPos)) return resetDrag();
-        if (target.classList.contains("has-uld")) return resetDrag();
-        if (isBlocked(newPos, loads.map(l => l.position))) return resetDrag();
-
-        moveULD(draggingULD, target);
-        draggingULD.classList.remove("dragging");
-        draggingULD = null;
-        clearHighlights();
-    }
-
-
-    function resetDrag() {
-        draggingULD.style.position = "relative";
-        draggingULD.style.left = "0";
-        draggingULD.style.top = "0";
-        draggingULD.classList.remove("dragging");
-        clearHighlights();
-        draggingULD = null;
-    }
+  function resetDrag() {
+    draggingULD.style.position = "relative";
+    draggingULD.style.left = "0";
+    draggingULD.style.top  = "0";
+    draggingULD.classList.remove("dragging");
+    clearHighlights();
+    draggingULD = null;
+  }
 }
 
 /* ==========================================================
