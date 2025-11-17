@@ -24,7 +24,7 @@ const aircraft = {
         "26L","25L","24L","23L","22L","21L","13L","12L","11L",
         "26R","25R","24R","23R","22R","21R","13R","12R","11R",
         "43L","42L","41L","34L","33L","32L","31L",
-        "43R","42R","41R","34L","33L","32L","31L"
+        "43R","42R","41R","34R","33R","32R","31R"
     ],
 
     palletPositions: [
@@ -124,19 +124,20 @@ function makeHoldSection(name, cfg) {
     const L = document.createElement("div");
     L.className = "ake-row";
     cfg.akeLeft.forEach(p => L.appendChild(makeSlot(p, "ake")));
-    grid.appendChild(L);
 
     const R = document.createElement("div");
     R.className = "ake-row";
     cfg.akeRight.forEach(p => R.appendChild(makeSlot(p, "ake")));
-    grid.appendChild(R);
 
     const P = document.createElement("div");
     P.className = "pallet-row";
     cfg.pallet.forEach(p => P.appendChild(makeSlot(p, "pallet")));
-    grid.appendChild(P);
 
+    grid.appendChild(L);
+    grid.appendChild(R);
+    grid.appendChild(P);
     wrap.appendChild(grid);
+
     return wrap;
 }
 
@@ -149,67 +150,39 @@ function makeSlot(pos, type) {
 
 
 /* ==========================================================
-   ADD LOAD ROW — NEW .cell HTML
+   ADD LOAD ROW — USING TEMPLATE (NO HTML IN JS)
 ========================================================== */
 
 function addLoadRow() {
-    const list = document.getElementById("loadList");
+    const template = document.getElementById("loadRowTemplate");
+    const clone = template.content.cloneNode(true);
 
-    const row = document.createElement("div");
-    row.className = "load-row";
+    const row = clone.querySelector(".load-row");
     row.dataset.loadid = loadCounter;
 
-    row.innerHTML = `
-        <div class="cell">
-            <select class="load-type">
-                <option value="AKE">AKE</option>
-                <option value="AKN">AKN</option>
-                <option value="PAG">PAG</option>
-                <option value="PMC">PMC</option>
-                <option value="PAJ">PAJ</option>
-            </select>
-        </div>
-
-        <div class="cell">
-            <input type="text" class="load-uldid" placeholder="ULD">
-        </div>
-
-        <div class="cell">
-            <select class="load-bulk">
-                <option value="BY">BY</option>
-                <option value="FKT">FKT</option>
-            </select>
-        </div>
-
-        <div class="cell">
-            <select class="load-pos"></select>
-        </div>
-
-        <div class="cell">
-            <button class="delete-load">X</button>
-        </div>
-    `;
-
-    list.appendChild(row);
+    document.getElementById("loadList").appendChild(clone);
 
     loads.push({
         id: loadCounter,
         type: "AKE",
         uldid: "",
+        weight: "",
         bulk: "BY",
         position: ""
     });
 
     loadCounter++;
 
-    updatePositionDropdown(row, "AKE");
+    const newRow = document.querySelector(`#loadList .load-row:last-child`);
 
-    row.querySelector(".load-type").addEventListener("change", onTypeChanged);
-    row.querySelector(".load-uldid").addEventListener("input", onLoadEdited);
-    row.querySelector(".load-bulk").addEventListener("change", onLoadEdited);
-    row.querySelector(".load-pos").addEventListener("change", onLoadEdited);
+    updatePositionDropdown(newRow, "AKE");
 
-    row.querySelector(".delete-load").addEventListener("click", () =>
+    newRow.querySelector(".load-type").addEventListener("change", onTypeChanged);
+    newRow.querySelector(".load-uldid").addEventListener("input", onLoadEdited);
+    newRow.querySelector(".load-weight").addEventListener("input", onLoadEdited);
+    newRow.querySelector(".load-bulk").addEventListener("change", onLoadEdited);
+    newRow.querySelector(".load-pos").addEventListener("change", onLoadEdited);
+    newRow.querySelector(".delete-load").addEventListener("click", () =>
         deleteLoad(row.dataset.loadid)
     );
 }
@@ -225,6 +198,7 @@ function onLoadEdited(e) {
 
     load.type = row.querySelector(".load-type").value;
     load.uldid = row.querySelector(".load-uldid").value.toUpperCase().trim();
+    load.weight = row.querySelector(".load-weight").value.trim();
     load.bulk = row.querySelector(".load-bulk").value;
     load.position = row.querySelector(".load-pos").value;
 
@@ -273,6 +247,7 @@ function isPosBlocked(load) {
     if (["PAG","PMC","PAJ"].includes(load.type)) {
         return palletBlocks[load.position]?.some(c => isSlotUsed(c));
     }
+
     return containerBlocks[load.position]?.some(p => isSlotUsed(p));
 }
 
@@ -350,7 +325,6 @@ function makeULDdraggable(box) {
         draggingULD = box;
 
         const oldPos = box.dataset.position;
-
         const oldSlot = document.querySelector(`.slot[data-pos="${oldPos}"]`);
         if (oldSlot) oldSlot.removeChild(box);
 
@@ -510,7 +484,7 @@ function exportLayout() {
 
     loads.forEach(l => {
         if (l.uldid && l.position)
-            txt += `${l.position}: ${l.uldid} (${l.bulk})\n`;
+            txt += `${l.position}: ${l.uldid}  WT:${l.weight || 0}KG  (${l.bulk})\n`;
     });
 
     const out = document.getElementById("export-output");
