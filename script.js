@@ -220,7 +220,7 @@ function addLoadRow() {
     loadCounter++;
 }
 
-function onLoadEdited(e) {
+
     const row = e.target.closest(".load-row");
     const load = loads.find(l => l.id == row.dataset.loadid);
 
@@ -268,23 +268,6 @@ function updatePositionDropdown(row, type) {
 /* ==========================================================
    LOAD UPDATE + BLOCKING
 ========================================================== */
-
-function onLoadEdited(e) {
-    const row = e.target.closest(".load-row");
-    const load = loads.find(l => l.id == row.dataset.loadid);
-
-    load.type = row.querySelector(".load-type").value;
-    load.uldid = row.querySelector(".load-uldid").value.toUpperCase().trim();
-    load.position = row.querySelector(".load-pos").value;
-
-    if (load.position && isPosBlocked(load)) {
-        alert(`Position ${load.position} is blocked.`);
-        row.querySelector(".load-pos").value = "";
-        load.position = "";
-    }
-
-    updateCargoDeck();
-}
 
 function isPosBlocked(load) {
     if (!load.position) return false;
