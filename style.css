@@ -1,6 +1,10 @@
-/* =========================
+/* =========================================================
    GLOBAL LAYOUT
-========================= */
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -16,209 +20,231 @@ body {
   display: flex;
   flex-direction: row;
   width: 100%;
-  max-width: 1600px;
+  max-width: 1650px;
   padding: 20px;
-  gap: 20px;
+  gap: 22px;
 }
 
-/* =========================
-   LEFT SIDEBAR
-========================= */
+
+/* =========================================================
+   LEFT SIDEBAR – LOAD BUILDER
+========================================================= */
 
 .sidebar {
-  width: 380px;
-  background: rgba(10, 18, 35, 0.82);
+  width: 360px;
+  background: rgba(10, 18, 35, 0.86);
   border-radius: 14px;
-  padding: 18px;
-  border: 1px solid rgba(80, 100, 130, 0.45);
+  padding: 20px;
+  border: 1px solid rgba(80, 100, 130, 0.40);
   box-shadow: 0 0 20px rgba(0,0,0,0.45) inset;
 
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 
-  height: calc(100vh - 40px);
+  max-height: 95vh;
   overflow: hidden;
 }
 
 .sidebar h2 {
-  margin: 0 0 5px;
+  margin: 0;
   font-size: 18px;
   color: #d1d5db;
+  font-weight: 600;
 }
 
-.sidebar select {
-  width: 100%;
-  height: 34px;
-  background: #0f172a;
-  border: 1px solid #475569;
-  color: #e2e8f0;
-  border-radius: 6px;
-  padding-left: 6px;
+.sidebar label {
+  color: #9ca3af;
   font-size: 13px;
 }
 
-/* Add Load Button */
+/* Dropdowns */
+.sidebar select {
+  width: 100%;
+  height: 38px;
+  background: #0f172a;
+  border: 1px solid #475569;
+  color: #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  padding-left: 8px;
+}
+
+/* Add Load button */
 .add-load-btn {
   width: 100%;
-  padding: 10px;
+  height: 40px;
   background: #0ea5e9;
   color: #ffffff;
   border-radius: 8px;
   border: none;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 15px;
+  transition: background .15s;
 }
 .add-load-btn:hover {
   background: #38bdf8;
 }
 
-/* =========================
+
+/* =========================================================
    ULD LIST
-========================= */
+========================================================= */
 
 .load-list {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 4px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  max-height: calc(95vh - 200px);
+  overflow-y: auto;
+  padding-right: 10px;
 }
 
-/* =========================
-   LOAD ROW (COMPACT)
-========================= */
+/* Scrollbar styling */
+.load-list::-webkit-scrollbar {
+  width: 6px;
+}
+.load-list::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 10px;
+}
+.load-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+/* =========================================================
+   LOAD ROW (COMPACT PRO DESIGN)
+========================================================= */
 
 .load-row {
   display: flex;
-  gap: 6px;
   align-items: center;
-  background: rgba(25, 35, 60, 0.65);
-  padding: 6px 8px;
-  border-radius: 6px;
+  gap: 8px;
+
+  background: rgba(25, 35, 60, 0.75);
+  padding: 8px 10px;
+  border-radius: 10px;
   border: 1px solid rgba(70, 90, 120, 0.35);
-  height: 36px;
-  width: 100%;
+  overflow: hidden;               /* FIX for rounded corners */
+  height: 44px;                   /* Taller = more premium look */
 }
 
+/* All controls same height */
 .load-row select,
 .load-row input {
+  height: 30px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid #475569;
   background: #0f172a;
   color: #e2e8f0;
-  border: 1px solid #475569;
-  border-radius: 5px;
-  padding: 3px 5px;
-  font-size: 12px;
-  height: 24px;
+  padding: 0 8px;
 }
 
-/* TYPE select */
-.load-row select.load-type {
-  width: 58px;
-}
-
-/* ULD ID */
-.load-row input.load-uldid {
-  width: 68px;
-}
-
-/* BY/FKT (very compact) */
-.load-row select.load-bulk {
-  width: 45px !important;
-  padding-left: 3px;
-}
-
-/* POSITION select */
-.load-row select.load-pos {
-  width: 58px;
-}
+/* Individual sizes */
+.load-row select.load-type { width: 70px; }
+.load-row input.load-uldid { width: 95px; }
+.load-row select.load-bulk { width: 55px; text-align: center; }
+.load-row select.load-pos  { width: 80px; }
 
 /* Delete button */
 .delete-load {
+  height: 30px;
+  padding: 0 10px;
   background: #ef4444;
-  color: white;
   border: none;
-  padding: 2px 6px;
-  border-radius: 5px;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
   cursor: pointer;
-  font-size: 11px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-weight: 600;
+  transition: background .15s;
+}
+.delete-load:hover {
+  background: #dc2626;
 }
 
-/* =========================
-   CARGO AREA (RIGHT PANEL)
-========================= */
+
+/* =========================================================
+   RIGHT PANEL – CARGO DECK
+========================================================= */
 
 .cargo-area {
   flex: 1;
   background: radial-gradient(circle at top, #111827 0%, #020617 75%);
-  padding: 20px;
+  padding: 24px;
   border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.25);
-  box-shadow: 0 0 30px rgba(0,0,0,0.55);
-  position: relative;
+  box-shadow: 0 0 40px rgba(0,0,0,0.55);
 }
 
 .cargo-area .header {
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
 }
 
 .cargo-area h1 {
   margin: 0;
-  font-size: 22px;
+  font-size: 24px;
+  font-weight: 600;
 }
 
 .subtitle {
   color: #9ca3af;
-  font-size: 13px;
+  font-size: 14px;
+  margin-top: 4px;
 }
 
-#deckContainer {
-  position: relative;
-}
 
-/* HOLD SECTIONS */
+/* =========================================================
+   HOLD SECTIONS
+========================================================= */
+
 .hold-section {
   margin-top: 28px;
-  padding: 16px;
-  background: rgba(10, 19, 38, 0.9);
+  padding: 20px;
+  background: rgba(10, 19, 38, 0.95);
   border-radius: 14px;
-  border: 1px solid rgba(75, 85, 99, 0.6);
+  border: 1px solid rgba(75, 85, 99, 0.60);
 }
 
 .hold-section h2 {
-  margin: 0 0 10px;
-  color: #ffffff;
+  margin: 0 0 14px;
+  color: #f1f5f9;
+  font-size: 17px;
 }
 
-/* SLOT GRID */
+
+/* =========================================================
+   DECK GRIDS
+========================================================= */
+
 .deck-grid {
-  width: 750px;
+  width: 760px;
   margin: 0 auto;
 }
-
 .aft-grid {
-  width: 620px;
+  width: 640px;
 }
 
 .ake-row,
 .pallet-row {
   display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-/* SLOTS */
+
+/* =========================================================
+   SLOTS
+========================================================= */
+
 .slot {
-  height: 48px;
-  border-radius: 10px;
+  height: 50px;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -231,100 +257,109 @@ body {
 .slot::before {
   content: attr(data-pos);
   position: absolute;
-  top: -14px;
-  font-size: 10px;
+  top: -16px;
+  font-size: 11px;
   color: #8ea0c5;
 }
 
-/* AKE */
+/* AKE look */
 .slot.ake {
-  width: 70px;
+  width: 72px;
   background: #112037;
   border: 1px solid rgba(0, 180, 255, 0.45);
-  box-shadow:
-    inset 0 0 6px rgba(0, 200, 255, 0.12),
-    0 0 6px rgba(0, 200, 255, 0.22);
+  box-shadow: inset 0 0 6px rgba(0, 200, 255, 0.18),
+              0 0 7px rgba(0, 200, 255, 0.25);
 }
 .slot.ake.has-uld {
-  background: rgba(0, 200, 255, 0.15);
+  background: rgba(0, 200, 255, 0.18);
   border-color: #22c55e;
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.55);
 }
 
-/* Pallet */
+/* Pallet look */
 .slot.pallet {
-  width: 110px;
+  width: 118px;
   background: #0f172a;
-  border: 1px solid rgba(180, 150, 120, 0.45);
+  border: 1px solid rgba(200, 160, 120, 0.45);
 }
 .slot.pallet.has-uld {
-  background: rgba(200, 160, 120, 0.18);
+  background: rgba(200, 160, 120, 0.22);
   border-color: #22c55e;
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.55);
 }
 
+/* Disabled slot */
 .slot.disabled {
-  opacity: 0.28;
+  opacity: 0.30;
   pointer-events: none;
-  border-color: #475569 !important;
 }
 
-/* ULD BOX */
+
+/* =========================================================
+   ULD BOXES
+========================================================= */
+
 .uld-box {
   background: linear-gradient(to bottom right, #1e293b, #0f172a);
-  padding: 5px 8px;
-  border-radius: 6px;
-  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
   color: #f1f5f9;
   border: 1px solid #475569;
   cursor: grab;
   user-select: none;
   white-space: nowrap;
-  transition: 0.1s ease-out;
+  transition: 0.12s ease-out;
 }
 
 .uld-box.dragging {
-  opacity: 0.9;
+  opacity: 0.92;
   cursor: grabbing;
-  z-index: 9999;
-  transform: scale(1.1);
-  box-shadow: 0 0 14px rgba(0, 200, 255, 0.55);
+  transform: scale(1.14);
+  z-index: 10000;
+  box-shadow: 0 0 16px rgba(0, 200, 255, 0.65);
 }
 
-/* BUTTON BAR */
+
+/* =========================================================
+   EXPORT / CLEAR BAR
+========================================================= */
+
 .cargo-buttons-bar {
   width: 100%;
-  margin-top: 20px;
-  background: rgba(5,5,10,0.92);
-  padding: 15px;
-  border-radius: 10px;
+  margin-top: 28px;
+  background: rgba(5,5,10,0.95);
+  padding: 18px;
+  border-radius: 12px;
   border: 1px solid #334155;
 
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 26px;
 }
 
 .cargo-buttons-bar button {
-  padding: 10px 20px;
+  padding: 12px 28px;
   background: #111827;
   border: 1px solid #475569;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   color: #e5e7eb;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
 }
-
 .cargo-buttons-bar button:hover {
   background: #1e293b;
 }
-
 .cargo-buttons-bar .danger {
   border-color: #ef4444;
 }
 
-/* EXPORT MODAL */
+
+/* =========================================================
+   EXPORT MODAL
+========================================================= */
+
 .modal {
   position: fixed;
   inset: 0;
@@ -332,7 +367,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 5000;
+  z-index: 9999;
 }
 
 .modal.hidden {
@@ -341,16 +376,11 @@ body {
 
 .modal-content {
   background: #0f172a;
-  padding: 20px;
+  padding: 22px;
   border-radius: 12px;
   width: 420px;
   border: 1px solid #334155;
   text-align: center;
-}
-
-.modal-content h3 {
-  margin-bottom: 10px;
-  color: #e2e8f0;
 }
 
 #export-output {
@@ -358,18 +388,19 @@ body {
   height: 150px;
   background: #020617;
   border: 1px solid #475569;
+  border-radius: 10px;
   color: #e2e8f0;
-  border-radius: 8px;
   padding: 10px;
-  margin-bottom: 15px;
+  margin: 16px 0;
   font-size: 13px;
 }
 
 #closeModal {
-  padding: 8px 16px;
+  padding: 10px 18px;
   background: #1e293b;
+  border-radius: 10px;
   border: 1px solid #475569;
-  border-radius: 8px;
   color: #e2e8f0;
   cursor: pointer;
+  font-weight: 600;
 }
