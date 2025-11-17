@@ -67,7 +67,6 @@ body {
 /* =========================
    LOAD ROW (with .cell wrappers)
 ========================= */
-
 .load-row {
   background: rgba(25, 35, 60, 0.85);
   border: 1px solid rgba(70, 90, 120, 0.35);
@@ -83,14 +82,12 @@ body {
   overflow: hidden;
 }
 
-/* Wrapper for controls */
 .cell {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Inputs / Selects / Buttons */
 .cell select,
 .cell input,
 .cell button {
@@ -175,7 +172,7 @@ body {
 }
 
 /* =========================
-   SLOTS (POS INSIDE BOX)
+   SLOTS (POS INSIDE BOX + BLOCKING FIX)
 ========================= */
 .slot {
   height: 48px;
@@ -188,19 +185,17 @@ body {
   align-items: center;
 
   position: relative;
-  color: #dbe2f0;
+  overflow: hidden;
 
-  /* POS NUMBER SIZE INSIDE */
+  color: #dbe2f0;
   font-size: 15px;
   font-weight: 700;
 }
 
-/* REMOVE OLD FLOATING POSITION LABEL */
-.slot::before {
-  display: none;
-}
+/* REMOVE OLD LABEL ABOVE */
+.slot::before { display: none; }
 
-/* NEW POSITION LABEL INSIDE THE CELL */
+/* POS NUMBER INSIDE */
 .slot::after {
   content: attr(data-pos);
   position: absolute;
@@ -208,21 +203,48 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1;
+
   color: #cfd8ff;
   font-size: 15px;
   font-weight: 700;
 }
 
-/* AKE / PALLET COLORS */
+/* AKE / PALLET WIDTHS */
 .slot.ake { width: 70px; border-color: #2196f3; }
 .slot.pallet { width: 110px; border-color: #b48c64; }
 
+/* SLOT WITH ULD */
 .slot.has-uld {
   border-color: #22c55e;
   box-shadow: 0 0 10px rgba(34,197,94,0.45);
 }
+.slot.has-uld::after {
+  color: white;
+  font-weight: 800;
+}
 
-.slot.disabled { opacity: 0.25; }
+/* DISABLED / BLOCKED SLOT */
+.slot.disabled {
+  opacity: 0.35;
+  filter: grayscale(0.7);
+}
+.slot.disabled::after {
+  color: #6b7280 !important;
+}
+
+/* DRAG HIGHLIGHT VALID */
+.slot.highlight {
+  outline: 2px solid #22c55e !important;
+  outline-offset: -2px;
+}
+
+/* DRAG HIGHLIGHT INVALID */
+.slot.invalid {
+  outline: 2px solid #ef4444 !important;
+  outline-offset: -2px;
+  opacity: 0.35;
+}
 
 /* =========================
    ULD BOXES
@@ -236,6 +258,9 @@ body {
   font-size: 12px;
   cursor: grab;
   white-space: nowrap;
+
+  position: relative;
+  z-index: 5;
 }
 
 .uld-box.dragging {
