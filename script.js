@@ -13,7 +13,6 @@ let palletBlocks = {};
 let containerBlocks = {};
 
 
-
 /* ==========================================================
    LOAD AIRCRAFT FROM FILE
 ========================================================== */
@@ -22,8 +21,8 @@ async function loadAircraftProfile(name) {
     try {
         const module = await import(`./${name}.js`);
 
-        // We keep your EC_NOG format
-        const ac = module[Object.keys(module)[0]]; // gets EC_NOG
+        // YOUR aircraft files export "aircraft"
+        const ac = module.aircraft;
 
         activeAircraft = ac;
         containerPositions = ac.containerPositions;
@@ -39,7 +38,7 @@ async function loadAircraftProfile(name) {
             });
         }
 
-        console.log("Loaded aircraft:", ac.name);
+        console.log("Loaded aircraft:", ac.registration);
 
         renderDeck(ac.layout);
         updateCargoDeck();
@@ -48,7 +47,6 @@ async function loadAircraftProfile(name) {
         console.error("Aircraft loading error:", err);
     }
 }
-
 
 
 /* ==========================================================
@@ -72,22 +70,17 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 
-
 /* ==========================================================
    DYNAMIC DECK GENERATION
 ========================================================== */
 
 function renderDeck(layout) {
     const deck = document.getElementById("deckContainer");
-    deck.innerHTML = ""; // reset
+    deck.innerHTML = "";
 
-    /* ---------- FORWARD HOLD ---------- */
     deck.appendChild(makeHoldSection("FORWARD HOLD", layout.forward));
-
-    /* ---------- AFT HOLD ---------- */
     deck.appendChild(makeHoldSection("AFT HOLD", layout.aft));
 }
-
 
 
 function makeHoldSection(title, cfg) {
@@ -100,19 +93,16 @@ function makeHoldSection(title, cfg) {
     const grid = document.createElement("div");
     grid.className = (title.includes("AFT")) ? "deck-grid aft-grid" : "deck-grid";
 
-    /* Left AKE row */
     const leftRow = document.createElement("div");
     leftRow.className = "ake-row";
     cfg.akeLeft.forEach(pos => leftRow.appendChild(makeSlot(pos, "ake")));
     grid.appendChild(leftRow);
 
-    /* Right AKE row */
     const rightRow = document.createElement("div");
     rightRow.className = "ake-row";
     cfg.akeRight.forEach(pos => rightRow.appendChild(makeSlot(pos, "ake")));
     grid.appendChild(rightRow);
 
-    /* Pallet row */
     const palletRow = document.createElement("div");
     palletRow.className = "pallet-row";
     cfg.pallet.forEach(pos => palletRow.appendChild(makeSlot(pos, "pallet")));
@@ -123,14 +113,12 @@ function makeHoldSection(title, cfg) {
 }
 
 
-
 function makeSlot(position, type) {
     const d = document.createElement("div");
     d.className = `slot ${type}`;
     d.dataset.pos = position;
     return d;
 }
-
 
 
 /* ==========================================================
@@ -174,7 +162,6 @@ function addLoadRow() {
 }
 
 
-
 function onLoadTypeChange(e) {
     const row = e.target.closest(".load-row");
     const type = e.target.value;
@@ -186,7 +173,6 @@ function onLoadTypeChange(e) {
     updatePositionDropdown(row, type);
     updateCargoDeck();
 }
-
 
 
 function updatePositionDropdown(row, type) {
@@ -202,9 +188,8 @@ function updatePositionDropdown(row, type) {
 }
 
 
-
 /* ==========================================================
-   LOAD UPDATED
+   LOAD UPDATE
 ========================================================== */
 
 function onLoadUpdate(e) {
@@ -225,9 +210,8 @@ function onLoadUpdate(e) {
 }
 
 
-
 /* ==========================================================
-   BLOCKING
+   POSITION BLOCKING
 ========================================================== */
 
 function isPositionBlocked(load) {
@@ -245,20 +229,17 @@ function slotOccupied(position) {
 }
 
 
-
 /* ==========================================================
    RENDER SLOTS
 ========================================================== */
 
 function updateCargoDeck() {
 
-    // Reset
     document.querySelectorAll(".slot").forEach(slot => {
         slot.innerHTML = "";
         slot.classList.remove("has-uld");
     });
 
-    // Place ULDs
     for (const load of loads) {
         if (!load.position || !load.uldid) continue;
 
@@ -281,9 +262,8 @@ function updateCargoDeck() {
 }
 
 
-
 /* ==========================================================
-   APPLY BLOCKING VISUALS
+   BLOCKING VISUALS
 ========================================================== */
 
 function applyBlockingVisuals() {
@@ -306,7 +286,6 @@ function disableSlot(pos) {
 }
 
 
-
 /* ==========================================================
    PERFECT DRAGGING (NO OFFSET)
 ========================================================== */
@@ -318,7 +297,6 @@ function makeULDdraggable(box) {
         draggingULD = box;
         box.classList.add("dragging");
 
-        // Move to body so dragging is relative to viewport
         document.body.appendChild(box);
 
         highlightSlots(box.dataset.uldType);
@@ -327,43 +305,40 @@ function makeULDdraggable(box) {
         document.addEventListener("mouseup", dragEnd);
     });
 
-    // === PERFECT CURSOR-FOLLOW SYSTEM ===
     function dragMove(e) {
-        const x = e.clientX;
-        const y = e.clientY;
-
-        draggingULD.style.position = "fixed";   
-        draggingULD.style.left = x + "px";
-        draggingULD.style.top = y + "px";
-
-        draggingULD.style.transform = "translate(-50%, -50%)";  
+        draggingULD.style.position = "fixed";
+        draggingULD.style.left = `${e.clientX}px`;
+        draggingULD.style.top = `${e.clientY}px`;
+        draggingULD.style.transform = "translate(-50%, -50%)";
     }
 
     function dragEnd(e) {
+
         document.removeEventListener("mousemove", dragMove);
         document.removeEventListener("mouseup", dragEnd);
 
-        // Try to drop into a slot
         const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
 
-        if (dropTarget && dropTarget.classList.contains("slot") && 
-            dropTarget.classList.contains(draggingULD.dataset.uldType)) {
-
-            dropTarget.innerHTML = "";
-            dropTarget.appendChild(draggingULD);
+        if (
+            dropTarget &&
+            dropTarget.classList.contains("slot") &&
+            isValidSlotType(draggingULD.dataset.uldType, dropTarget.dataset.pos) &&
+            !dropTarget.classList.contains("disabled")
+        ) {
+            moveULD(draggingULD, dropTarget);
         }
 
         resetDrag();
     }
 
-    // === CLEAN RESET ===
     function resetDrag() {
+
         if (!draggingULD) return;
 
-        draggingULD.style.position = "relative";
-        draggingULD.style.left = "0";
-        draggingULD.style.top = "0";
-        draggingULD.style.transform = "none";
+        draggingULD.style.position = "";
+        draggingULD.style.left = "";
+        draggingULD.style.top = "";
+        draggingULD.style.transform = "";
 
         draggingULD.classList.remove("dragging");
         clearHighlights();
@@ -372,14 +347,13 @@ function makeULDdraggable(box) {
     }
 }
 
+
 /* ==========================================================
    DRAG HELPERS
 ========================================================== */
 
 function highlightSlots(type) {
     document.querySelectorAll(".slot").forEach(slot => {
-        slot.style.outline = "none";
-        slot.style.opacity = "1";
 
         const pos = slot.dataset.pos;
         const isP = pos.endsWith("P");
@@ -388,10 +362,10 @@ function highlightSlots(type) {
             (["AKE","AKN"].includes(type) && !isP) ||
             (["PAG","PMC","PAJ"].includes(type) && isP);
 
-        if (!valid) {
-            slot.style.opacity = "0.25";
-            return;
-        }
+        slot.style.outline = "none";
+        slot.style.opacity = valid ? "1" : "0.25";
+
+        if (!valid) return;
 
         if (slot.classList.contains("disabled")) {
             slot.style.outline = "2px solid #dc2626";
@@ -421,11 +395,6 @@ function isValidSlotType(uldType, pos) {
     );
 }
 
-function isBlocked(pos, occupied) {
-    return palletBlocks[pos]?.some(p => occupied.includes(p)) || false;
-}
-
-
 
 /* ==========================================================
    MOVE ULD TO NEW SLOT
@@ -443,11 +412,15 @@ function moveULD(box, targetSlot) {
     const load = loads.find(l => l.uldid === box.textContent);
     if (load) load.position = targetSlot.dataset.pos;
 
-    box.style.position = "relative";
-    box.style.left = "0";
-    box.style.top = "0";
-}
+    box.dataset.position = targetSlot.dataset.pos;
 
+    box.style.position = "";
+    box.style.left = "";
+    box.style.top = "";
+    box.style.transform = "";
+
+    updateCargoDeck();
+}
 
 
 /* ==========================================================
@@ -464,16 +437,16 @@ function clearAllLoads() {
 }
 
 
-
 /* ==========================================================
    EXPORT
 ========================================================== */
 
 function exportLayout() {
-    let out = `LIR EXPORT — ${activeAircraft?.name}\n===========================\n\n`;
+    let out = `LIR EXPORT — ${activeAircraft?.registration}\n===========================\n\n`;
 
     for (const l of loads) {
-        if (l.uldid && l.position) out += `${l.position}: ${l.uldid}\n`;
+        if (l.uldid && l.position)
+            out += `${l.position}: ${l.uldid}\n`;
     }
 
     document.getElementById("export-output").value = out;
