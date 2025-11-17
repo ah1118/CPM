@@ -1,10 +1,6 @@
-/* =========================================================
-   GLOBAL LAYOUT
-========================================================= */
-
-* {
-  box-sizing: border-box;
-}
+/* =========================
+   GLOBAL
+========================= */
 
 body {
   margin: 0;
@@ -20,77 +16,62 @@ body {
   display: flex;
   flex-direction: row;
   width: 100%;
-  max-width: 1650px;
+  max-width: 1600px;
   padding: 20px;
-  gap: 22px;
+  gap: 20px;
 }
 
-
-/* =========================================================
-   LEFT SIDEBAR – LOAD BUILDER
-========================================================= */
+/* =========================
+   SIDEBAR
+========================= */
 
 .sidebar {
   width: 360px;
-  background: rgba(10, 18, 35, 0.86);
+  background: rgba(10, 18, 35, 0.82);
   border-radius: 14px;
-  padding: 20px;
-  border: 1px solid rgba(80, 100, 130, 0.40);
-  box-shadow: 0 0 20px rgba(0,0,0,0.45) inset;
+  padding: 18px;
+  border: 1px solid rgba(80, 100, 130, 0.45);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.45);
 
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 
   max-height: 95vh;
   overflow: hidden;
 }
 
 .sidebar h2 {
-  margin: 0;
+  margin: 0 0 5px;
   font-size: 18px;
   color: #d1d5db;
-  font-weight: 600;
 }
 
-.sidebar label {
-  color: #9ca3af;
-  font-size: 13px;
-}
-
-/* Dropdowns */
 .sidebar select {
   width: 100%;
-  height: 38px;
+  height: 34px;
   background: #0f172a;
   border: 1px solid #475569;
   color: #e2e8f0;
-  border-radius: 8px;
-  font-size: 14px;
-  padding-left: 8px;
+  border-radius: 6px;
+  padding-left: 6px;
+  font-size: 13px;
 }
 
-/* Add Load button */
 .add-load-btn {
   width: 100%;
-  height: 40px;
+  padding: 10px;
   background: #0ea5e9;
   color: #ffffff;
   border-radius: 8px;
   border: none;
   cursor: pointer;
   font-weight: 600;
-  font-size: 15px;
-  transition: background .15s;
+  font-size: 14px;
 }
 .add-load-btn:hover {
   background: #38bdf8;
 }
-
-
-/* =========================================================
-   ULD LIST
-========================================================= */
 
 .load-list {
   display: flex;
@@ -99,154 +80,141 @@ body {
 
   max-height: calc(95vh - 200px);
   overflow-y: auto;
-  padding-right: 10px;
+  padding-right: 4px;
 }
 
-/* Scrollbar styling */
-.load-list::-webkit-scrollbar {
-  width: 6px;
-}
-.load-list::-webkit-scrollbar-thumb {
-  background: #475569;
-  border-radius: 10px;
-}
-.load-list::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-
-/* =========================================================
-   LOAD ROW (COMPACT PRO DESIGN)
-========================================================= */
+/* =========================
+   LOAD ROW — FIXED PERFECT
+========================= */
 
 .load-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 
-  background: rgba(25, 35, 60, 0.75);
-  padding: 8px 10px;
-  border-radius: 10px;
+  background: rgba(25, 35, 60, 0.65);
+  padding: 10px 12px;
+
   border: 1px solid rgba(70, 90, 120, 0.35);
+  border-radius: 12px;
 
-  overflow: hidden;       /* ⭐ CRITICAL FIX */
-  width: 100%;            /* ⭐ Ensures full rounded shape */
-  box-sizing: border-box; /* avoids overflow from padding */
+  width: 100%;
+  overflow: visible; 
+  white-space: nowrap;      /* 💥 NEVER wrap */
 }
 
-/* All controls same height */
 .load-row select,
 .load-row input {
-  height: 30px;
-  font-size: 13px;
-  border-radius: 6px;
-  border: 1px solid #475569;
   background: #0f172a;
   color: #e2e8f0;
-  padding: 0 8px;
-}
-
-/* Individual sizes */
-.load-row select.load-type { width: 70px; }
-.load-row input.load-uldid { width: 95px; }
-.load-row select.load-bulk { width: 55px; text-align: center; }
-.load-row select.load-pos  { width: 80px; }
-
-/* Delete button */
-.delete-load {
-  height: 30px;
-  padding: 0 10px;
-  background: #ef4444;
-  border: none;
-  border-radius: 6px;
-  color: #fff;
+  border: 1px solid #475569;
+  border-radius: 7px;
   font-size: 13px;
+  height: 32px;
+
+  flex: 0 0 auto;           /* 💥 NEVER shrink */
+  padding: 0 10px;
+}
+
+/* Exact sizes */
+.load-row .load-type { width: 75px; }
+.load-row .load-uldid { width: 110px; }
+.load-row .load-bulk { width: 60px; }
+.load-row .load-pos { width: 75px; }
+
+.delete-load {
+  background: #ef4444;
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 600;
-  transition: background .15s;
-}
-.delete-load:hover {
-  background: #dc2626;
+  font-size: 14px;
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-
-/* =========================================================
-   RIGHT PANEL – CARGO DECK
-========================================================= */
+/* =========================
+   CARGO AREA
+========================= */
 
 .cargo-area {
   flex: 1;
   background: radial-gradient(circle at top, #111827 0%, #020617 75%);
-  padding: 24px;
+  padding: 20px;
   border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.25);
-  box-shadow: 0 0 40px rgba(0,0,0,0.55);
+  box-shadow: 0 0 30px rgba(0,0,0,0.55);
+  position: relative;
 }
 
 .cargo-area .header {
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .cargo-area h1 {
   margin: 0;
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 22px;
 }
 
 .subtitle {
   color: #9ca3af;
-  font-size: 14px;
-  margin-top: 4px;
+  font-size: 13px;
 }
 
+/* Hold container */
+#deckContainer {
+  position: relative;
+}
 
-/* =========================================================
+/* =========================
    HOLD SECTIONS
-========================================================= */
+========================= */
 
 .hold-section {
   margin-top: 28px;
-  padding: 20px;
-  background: rgba(10, 19, 38, 0.95);
+  padding: 16px;
+  background: rgba(10, 19, 38, 0.9);
   border-radius: 14px;
-  border: 1px solid rgba(75, 85, 99, 0.60);
+  border: 1px solid rgba(75, 85, 99, 0.6);
 }
 
 .hold-section h2 {
-  margin: 0 0 14px;
-  color: #f1f5f9;
-  font-size: 17px;
+  margin: 0 0 10px;
+  color: #ffffff;
 }
 
-
-/* =========================================================
-   DECK GRIDS
-========================================================= */
+/* =========================
+   SLOT GRID
+========================= */
 
 .deck-grid {
-  width: 760px;
+  width: 750px;
   margin: 0 auto;
 }
+
 .aft-grid {
-  width: 640px;
+  width: 620px;
 }
 
 .ake-row,
 .pallet-row {
   display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-
-/* =========================================================
+/* =========================
    SLOTS
-========================================================= */
+========================= */
 
 .slot {
-  height: 50px;
-  border-radius: 12px;
+  height: 48px;
+  border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -259,108 +227,103 @@ body {
 .slot::before {
   content: attr(data-pos);
   position: absolute;
-  top: -16px;
-  font-size: 11px;
+  top: -14px;
+  font-size: 10px;
   color: #8ea0c5;
 }
 
-/* AKE look */
 .slot.ake {
-  width: 72px;
+  width: 70px;
   background: #112037;
-  border: 1px solid rgba(0, 180, 255, 0.45);
-  box-shadow: inset 0 0 6px rgba(0, 200, 255, 0.18),
-              0 0 7px rgba(0, 200, 255, 0.25);
+  border: 1px solid rgba(0,180,255,0.45);
+  box-shadow: inset 0 0 6px rgba(0,200,255,0.12), 0 0 6px rgba(0,200,255,0.22);
 }
 .slot.ake.has-uld {
-  background: rgba(0, 200, 255, 0.18);
+  background: rgba(0,200,255,0.15);
   border-color: #22c55e;
-  box-shadow: 0 0 12px rgba(34, 197, 94, 0.55);
+  box-shadow: 0 0 10px rgba(34,197,94,0.45);
 }
 
-/* Pallet look */
 .slot.pallet {
-  width: 118px;
+  width: 110px;
   background: #0f172a;
-  border: 1px solid rgba(200, 160, 120, 0.45);
+  border: 1px solid rgba(180,150,120,0.45);
 }
 .slot.pallet.has-uld {
-  background: rgba(200, 160, 120, 0.22);
+  background: rgba(200,160,120,0.18);
   border-color: #22c55e;
-  box-shadow: 0 0 12px rgba(34, 197, 94, 0.55);
+  box-shadow: 0 0 10px rgba(34,197,94,0.45);
 }
 
-/* Disabled slot */
 .slot.disabled {
-  opacity: 0.30;
+  opacity: 0.28;
   pointer-events: none;
+  border-color: #475569 !important;
 }
 
-
-/* =========================================================
-   ULD BOXES
-========================================================= */
+/* =========================
+   ULD BOX
+========================= */
 
 .uld-box {
   background: linear-gradient(to bottom right, #1e293b, #0f172a);
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 13px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 12px;
   color: #f1f5f9;
   border: 1px solid #475569;
   cursor: grab;
   user-select: none;
   white-space: nowrap;
-  transition: 0.12s ease-out;
+  transition: 0.1s ease-out;
 }
 
 .uld-box.dragging {
-  opacity: 0.92;
+  opacity: 0.9;
   cursor: grabbing;
-  transform: scale(1.14);
-  z-index: 10000;
-  box-shadow: 0 0 16px rgba(0, 200, 255, 0.65);
+  z-index: 9999;
+  transform: scale(1.1);
+  box-shadow: 0 0 14px rgba(0,200,255,0.55);
 }
 
-
-/* =========================================================
-   EXPORT / CLEAR BAR
-========================================================= */
+/* =========================
+   BOTTOM BUTTON BAR
+========================= */
 
 .cargo-buttons-bar {
   width: 100%;
-  margin-top: 28px;
-  background: rgba(5,5,10,0.95);
-  padding: 18px;
-  border-radius: 12px;
+  margin-top: 20px;
+  background: rgba(5,5,10,0.92);
+  padding: 15px;
+  border-radius: 10px;
   border: 1px solid #334155;
-
   display: flex;
   justify-content: center;
-  gap: 26px;
+  gap: 20px;
 }
 
 .cargo-buttons-bar button {
-  padding: 12px 28px;
+  padding: 10px 20px;
   background: #111827;
   border: 1px solid #475569;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   color: #e5e7eb;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
 }
+
 .cargo-buttons-bar button:hover {
   background: #1e293b;
 }
+
 .cargo-buttons-bar .danger {
   border-color: #ef4444;
 }
 
-
-/* =========================================================
+/* =========================
    EXPORT MODAL
-========================================================= */
+========================= */
 
 .modal {
   position: fixed;
@@ -369,7 +332,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 5000;
 }
 
 .modal.hidden {
@@ -378,11 +341,16 @@ body {
 
 .modal-content {
   background: #0f172a;
-  padding: 22px;
+  padding: 20px;
   border-radius: 12px;
   width: 420px;
   border: 1px solid #334155;
   text-align: center;
+}
+
+.modal-content h3 {
+  margin-bottom: 10px;
+  color: #e2e8f0;
 }
 
 #export-output {
@@ -390,19 +358,18 @@ body {
   height: 150px;
   background: #020617;
   border: 1px solid #475569;
-  border-radius: 10px;
   color: #e2e8f0;
+  border-radius: 8px;
   padding: 10px;
-  margin: 16px 0;
+  margin-bottom: 15px;
   font-size: 13px;
 }
 
 #closeModal {
-  padding: 10px 18px;
+  padding: 8px 16px;
   background: #1e293b;
-  border-radius: 10px;
   border: 1px solid #475569;
+  border-radius: 8px;
   color: #e2e8f0;
   cursor: pointer;
-  font-weight: 600;
 }
