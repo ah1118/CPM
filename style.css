@@ -37,7 +37,7 @@ body {
   flex-direction: column;
   gap: 14px;
 
-  max-height: 95vh;
+  height: calc(100vh - 40px);
   overflow: hidden;
 }
 
@@ -47,7 +47,6 @@ body {
   color: #d1d5db;
 }
 
-/* Sidebar Dropdown */
 .sidebar select {
   width: 100%;
   height: 34px;
@@ -75,15 +74,18 @@ body {
   background: #38bdf8;
 }
 
-/* ULD List */
+/* =========================
+   ULD LIST
+========================= */
+
 .load-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-
-  max-height: 380px;
-  overflow-y: auto;
-  padding-right: 6px;
 }
 
 /* =========================
@@ -99,6 +101,7 @@ body {
   border-radius: 6px;
   border: 1px solid rgba(70, 90, 120, 0.35);
   height: 36px;
+  width: 100%;
 }
 
 .load-row select,
@@ -112,14 +115,28 @@ body {
   height: 24px;
 }
 
-.load-row select {
-  width: 70px;
+/* TYPE select */
+.load-row select.load-type {
+  width: 58px;
 }
 
-.load-row input {
-  width: 85px;
+/* ULD ID */
+.load-row input.load-uldid {
+  width: 68px;
 }
 
+/* BY/FKT (very compact) */
+.load-row select.load-bulk {
+  width: 45px !important;
+  padding-left: 3px;
+}
+
+/* POSITION select */
+.load-row select.load-pos {
+  width: 58px;
+}
+
+/* Delete button */
 .delete-load {
   background: #ef4444;
   color: white;
@@ -163,15 +180,11 @@ body {
   font-size: 13px;
 }
 
-/* Deck container */
 #deckContainer {
   position: relative;
 }
 
-/* =========================
-   HOLD SECTIONS
-========================= */
-
+/* HOLD SECTIONS */
 .hold-section {
   margin-top: 28px;
   padding: 16px;
@@ -185,10 +198,7 @@ body {
   color: #ffffff;
 }
 
-/* =========================
-   SLOT GRID
-========================= */
-
+/* SLOT GRID */
 .deck-grid {
   width: 750px;
   margin: 0 auto;
@@ -205,10 +215,7 @@ body {
   margin-bottom: 10px;
 }
 
-/* =========================
-   SLOTS
-========================= */
-
+/* SLOTS */
 .slot {
   height: 48px;
   border-radius: 10px;
@@ -221,7 +228,6 @@ body {
   transition: 0.12s ease-out;
 }
 
-/* Label above slot */
 .slot::before {
   content: attr(data-pos);
   position: absolute;
@@ -230,7 +236,7 @@ body {
   color: #8ea0c5;
 }
 
-/* AKE style */
+/* AKE */
 .slot.ake {
   width: 70px;
   background: #112037;
@@ -245,7 +251,7 @@ body {
   box-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
 }
 
-/* Pallet style */
+/* Pallet */
 .slot.pallet {
   width: 110px;
   background: #0f172a;
@@ -257,17 +263,13 @@ body {
   box-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
 }
 
-/* Disabled slot */
 .slot.disabled {
   opacity: 0.28;
   pointer-events: none;
   border-color: #475569 !important;
 }
 
-/* =========================
-   ULD BOX
-========================= */
-
+/* ULD BOX */
 .uld-box {
   background: linear-gradient(to bottom right, #1e293b, #0f172a);
   padding: 5px 8px;
@@ -289,10 +291,7 @@ body {
   box-shadow: 0 0 14px rgba(0, 200, 255, 0.55);
 }
 
-/* =========================
-   BLACK BUTTON BAR
-========================= */
-
+/* BUTTON BAR */
 .cargo-buttons-bar {
   width: 100%;
   margin-top: 20px;
@@ -325,10 +324,7 @@ body {
   border-color: #ef4444;
 }
 
-/* =========================
-   EXPORT MODAL
-========================= */
-
+/* EXPORT MODAL */
 .modal {
   position: fixed;
   inset: 0;
@@ -376,8 +372,4 @@ body {
   border-radius: 8px;
   color: #e2e8f0;
   cursor: pointer;
-}
-
-.load-row select.load-bulk {
-    width: 60px;
 }
