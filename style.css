@@ -16,85 +16,103 @@ body {
   display: flex;
   flex-direction: row;
   width: 100%;
-  max-width: 1800px;
+  max-width: 1600px;
   padding: 20px;
   gap: 20px;
 }
+
 
 /* =========================
    LEFT SIDEBAR
 ========================= */
 
 .sidebar {
-  width: 560px; /* EXPANDED SO ALL BOXES FIT */
+  width: 330px;                       /* Increased slightly for perfect row fit */
   background: rgba(10, 18, 35, 0.82);
   border-radius: 14px;
-  padding: 20px;
+  padding: 18px;
   border: 1px solid rgba(80, 100, 130, 0.45);
   box-shadow: 0 0 20px rgba(0,0,0,0.45) inset;
 
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 
   max-height: 95vh;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .sidebar h2 {
-  margin: 0;
-  font-size: 19px;
-  color: #fafafa;
-  font-weight: 600;
+  margin: 0 0 5px;
+  font-size: 18px;
+  color: #d1d5db;
 }
 
-.sidebar p {
-  color: #94a3b8;
-  margin: 4px 0 0;
-  font-size: 14px;
+/* Sidebar Dropdown */
+.sidebar select {
+  width: 100%;
+  height: 34px;
+  background: #0f172a;
+  border: 1px solid #475569;
+  color: #e2e8f0;
+  border-radius: 6px;
+  padding-left: 6px;
+  font-size: 13px;
 }
 
 /* Add Load Button */
 .add-load-btn {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   background: #0ea5e9;
   color: #ffffff;
   border-radius: 8px;
   border: none;
   cursor: pointer;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 14px;
 }
 .add-load-btn:hover {
   background: #38bdf8;
 }
 
-/* ULD List */
+
+/* =========================
+   LOAD LIST
+========================= */
+
 .load-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: center;           /* Ensures rows are centered */
+  width: 100%;
+  overflow-y: auto;
+  padding-right: 4px;
+  max-height: 550px;             /* Adjust if needed */
 }
 
+
 /* =========================
-   LOAD ROW (ALL BOXES FIT)
+   LOAD ROW (PERFECT CENTER)
 ========================= */
 
 .load-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
+  width: calc(100% - 20px);      /* Fits perfectly inside box */
+  max-width: 310px;
+  box-sizing: border-box;
+  margin: 0 auto;
 
+  display: flex;
+  gap: 8px;
+  align-items: center;
   background: rgba(25, 35, 60, 0.65);
   padding: 8px 10px;
-  border-radius: 8px;
+  border-radius: 10px;           /* Now fully visible */
   border: 1px solid rgba(70, 90, 120, 0.35);
-
-  white-space: nowrap !important;
-  overflow: visible !important;
-  width: 100%;
 }
+
+
+/* Inputs + Dropdowns in row */
 
 .load-row select,
 .load-row input {
@@ -102,45 +120,41 @@ body {
   color: #e2e8f0;
   border: 1px solid #475569;
   border-radius: 6px;
-  padding: 6px;
-  font-size: 13px;
-  height: 32px;
+  padding: 3px 5px;
+  font-size: 12px;
+  height: 26px;
 }
 
-/* FIELD WIDTHS */
-.load-row select.load-type {
-  width: 80px;
+.load-row select {
+  width: 70px;
 }
 
-.load-row input.load-uldid {
-  width: 120px;
+.load-row input {
+  flex: 1;
+  min-width: 80px;
 }
 
 .load-row select.load-bulk {
-  width: 60px;
+  width: 50px;
 }
 
-.load-row select.load-pos {
-  width: 90px;
-}
-
-/* Delete button */
 .delete-load {
   background: #ef4444;
   color: white;
   border: none;
-  padding: 6px 10px;
+  padding: 4px 8px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-}
-.delete-load:hover {
-  background: #dc2626;
+  font-size: 12px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+
 /* =========================
-   CARGO AREA (RIGHT PANEL)
+   CARGO AREA
 ========================= */
 
 .cargo-area {
@@ -153,9 +167,29 @@ body {
   position: relative;
 }
 
+.cargo-area .header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.cargo-area h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.subtitle {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+
 /* =========================
    HOLD SECTIONS
 ========================= */
+
+#deckContainer {
+  position: relative;
+}
 
 .hold-section {
   margin-top: 28px;
@@ -169,6 +203,7 @@ body {
   margin: 0 0 10px;
   color: #ffffff;
 }
+
 
 /* =========================
    SLOT GRID
@@ -190,6 +225,7 @@ body {
   margin-bottom: 10px;
 }
 
+
 /* =========================
    SLOTS
 ========================= */
@@ -200,6 +236,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #dbe2f0;
   position: relative;
   font-size: 13px;
   transition: 0.12s ease-out;
@@ -214,18 +251,21 @@ body {
   color: #8ea0c5;
 }
 
-/* AKE style */
+/* AKE slot */
 .slot.ake {
   width: 70px;
   background: #112037;
   border: 1px solid rgba(0, 180, 255, 0.45);
+  box-shadow: inset 0 0 6px rgba(0, 200, 255, 0.12),
+              0 0 6px rgba(0, 200, 255, 0.22);
 }
 .slot.ake.has-uld {
   background: rgba(0, 200, 255, 0.15);
   border-color: #22c55e;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
 }
 
-/* Pallet style */
+/* Pallet slot */
 .slot.pallet {
   width: 110px;
   background: #0f172a;
@@ -234,20 +274,22 @@ body {
 .slot.pallet.has-uld {
   background: rgba(200, 160, 120, 0.18);
   border-color: #22c55e;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.45);
 }
 
-/* Disabled */
 .slot.disabled {
-  opacity: 0.25;
+  opacity: 0.28;
   pointer-events: none;
+  border-color: #475569 !important;
 }
+
 
 /* =========================
-   ULD BOX (DRAGGABLE)
+   ULD BOX
 ========================= */
 
 .uld-box {
-  background: #1e293b;
+  background: linear-gradient(to bottom right, #1e293b, #0f172a);
   padding: 5px 8px;
   border-radius: 6px;
   font-size: 12px;
@@ -255,23 +297,31 @@ body {
   border: 1px solid #475569;
   cursor: grab;
   user-select: none;
+  white-space: nowrap;
   transition: 0.1s ease-out;
 }
 
 .uld-box.dragging {
   opacity: 0.9;
   cursor: grabbing;
-  transform: scale(1.1);
   z-index: 9999;
+  transform: scale(1.1);
+  box-shadow: 0 0 14px rgba(0, 200, 255, 0.55);
 }
 
+
 /* =========================
-   BUTTON BAR
+   BLACK BUTTON BAR
 ========================= */
 
 .cargo-buttons-bar {
   width: 100%;
-  margin-top: 25px;
+  margin-top: 20px;
+  background: rgba(5,5,10,0.92);
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -279,7 +329,7 @@ body {
 
 .cargo-buttons-bar button {
   padding: 10px 20px;
-  background: #1e293b;
+  background: #111827;
   border: 1px solid #475569;
   border-radius: 8px;
   cursor: pointer;
@@ -287,13 +337,15 @@ body {
   font-size: 14px;
   font-weight: 600;
 }
+
 .cargo-buttons-bar button:hover {
-  background: #273548;
+  background: #1e293b;
 }
 
 .cargo-buttons-bar .danger {
   border-color: #ef4444;
 }
+
 
 /* =========================
    EXPORT MODAL
@@ -309,7 +361,9 @@ body {
   z-index: 5000;
 }
 
-.modal.hidden { display: none; }
+.modal.hidden {
+  display: none;
+}
 
 .modal-content {
   background: #0f172a;
