@@ -65,7 +65,7 @@ body {
 }
 
 /* =========================
-   LOAD ROW (with .cell wrappers)
+   LOAD ROW
 ========================= */
 .load-row {
   background: rgba(25, 35, 60, 0.85);
@@ -101,10 +101,12 @@ body {
   color: #e2e8f0;
 }
 
-.load-type { width: 66px; }
-.load-uldid { width: 90px; }
-.load-bulk { width: 70px; }
-.load-pos  { width: 63px; }
+/* WIDTHS — UPDATED WITH WEIGHT */
+.load-type   { width: 66px; }
+.load-uldid  { width: 90px; }
+.load-weight { width: 75px; text-align: center; } /* NEW FIELD */
+.load-bulk   { width: 70px; }
+.load-pos    { width: 63px; }
 
 .delete-load {
   width: 40px;
@@ -172,7 +174,7 @@ body {
 }
 
 /* =========================
-   SLOTS (POS INSIDE BOX + BLOCKING FIX)
+   SLOTS (POS INSIDE BOX)
 ========================= */
 .slot {
   height: 48px;
@@ -192,10 +194,8 @@ body {
   font-weight: 700;
 }
 
-/* REMOVE OLD LABEL ABOVE */
 .slot::before { display: none; }
 
-/* POS NUMBER INSIDE */
 .slot::after {
   content: attr(data-pos);
   position: absolute;
@@ -210,11 +210,9 @@ body {
   font-weight: 700;
 }
 
-/* AKE / PALLET WIDTHS */
-.slot.ake { width: 70px; border-color: #2196f3; }
+.slot.ake    { width: 70px; border-color: #2196f3; }
 .slot.pallet { width: 110px; border-color: #b48c64; }
 
-/* SLOT WITH ULD */
 .slot.has-uld {
   border-color: #22c55e;
   box-shadow: 0 0 10px rgba(34,197,94,0.45);
@@ -224,7 +222,7 @@ body {
   font-weight: 800;
 }
 
-/* DISABLED / BLOCKED SLOT */
+/* BLOCKED */
 .slot.disabled {
   opacity: 0.35;
   filter: grayscale(0.7);
@@ -233,13 +231,12 @@ body {
   color: #6b7280 !important;
 }
 
-/* DRAG HIGHLIGHT VALID */
+/* HIGHLIGHTS */
 .slot.highlight {
   outline: 2px solid #22c55e !important;
   outline-offset: -2px;
 }
 
-/* DRAG HIGHLIGHT INVALID */
 .slot.invalid {
   outline: 2px solid #ef4444 !important;
   outline-offset: -2px;
