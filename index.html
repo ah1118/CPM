@@ -20,7 +20,47 @@
 
     <button id="addLoadBtn" class="add-load-btn">+ Add Load</button>
 
-    <!-- LOAD ROWS WILL BE INSERTED HERE -->
+    <!-- TEMPLATE FOR LOAD ROW (hidden) -->
+    <template id="loadRowTemplate">
+      <div class="load-row">
+
+        <div class="cell">
+          <select class="load-type">
+            <option value="AKE">AKE</option>
+            <option value="AKN">AKN</option>
+            <option value="PAG">PAG</option>
+            <option value="PMC">PMC</option>
+            <option value="PAJ">PAJ</option>
+          </select>
+        </div>
+
+        <div class="cell">
+          <input type="text" class="load-uldid" placeholder="ULD">
+        </div>
+
+        <div class="cell">
+          <input type="number" class="load-weight" placeholder="KG">
+        </div>
+
+        <div class="cell">
+          <select class="load-bulk">
+            <option value="BY">BY</option>
+            <option value="FKT">FKT</option>
+          </select>
+        </div>
+
+        <div class="cell">
+          <select class="load-pos"></select>
+        </div>
+
+        <div class="cell">
+          <button class="delete-load">X</button>
+        </div>
+
+      </div>
+    </template>
+
+    <!-- LOAD ROWS ARE INSERTED HERE -->
     <div id="loadList" class="load-list"></div>
   </aside>
 
@@ -32,7 +72,7 @@
       <p class="subtitle">Dynamic Layout · Real AKE/PAG widths · Blocking logic</p>
     </header>
 
-    <!-- DYNAMICALLY GENERATED AKE/PAG SLOTS -->
+    <!-- CARGO DECK SLOTS -->
     <div id="deckContainer"></div>
 
     <!-- EXPORT & CLEAR BUTTONS -->
