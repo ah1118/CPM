@@ -24,7 +24,7 @@ const aircraft = {
         "26L","25L","24L","23L","22L","21L","13L","12L","11L",
         "26R","25R","24R","23R","22R","21R","13R","12R","11R",
         "43L","42L","41L","34L","33L","32L","31L",
-        "43R","42R","41R","34R","33R","32R","31R"
+        "43R","42R","41R","34L","33L","32L","31L"
     ],
 
     palletPositions: [
@@ -64,7 +64,7 @@ let draggingULD = null;
 
 
 /* ==========================================================
-   INITIALIZE APP
+   INITIALIZE
 ========================================================== */
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -80,7 +80,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
 /* ==========================================================
-   LOAD AIRCRAFT LAYOUT
+   LOAD AIRCRAFT
 ========================================================== */
 
 function loadAircraftProfile() {
@@ -88,7 +88,6 @@ function loadAircraftProfile() {
     palletPositions = aircraft.palletPositions;
     palletBlocks = aircraft.palletBlocks;
 
-    // Invert pallet blocks → containerBlocks
     containerBlocks = {};
     for (const [p, list] of Object.entries(palletBlocks)) {
         list.forEach(c => {
@@ -114,13 +113,13 @@ function renderDeck(layout) {
     deck.appendChild(makeHoldSection("AFT HOLD", layout.aft));
 }
 
-function makeHoldSection(title, cfg) {
+function makeHoldSection(name, cfg) {
     const wrap = document.createElement("section");
     wrap.className = "hold-section";
-    wrap.innerHTML = `<h2>${title}</h2>`;
+    wrap.innerHTML = `<h2>${name}</h2>`;
 
     const grid = document.createElement("div");
-    grid.className = title.includes("AFT") ? "deck-grid aft-grid" : "deck-grid";
+    grid.className = name.includes("AFT") ? "deck-grid aft-grid" : "deck-grid";
 
     const L = document.createElement("div");
     L.className = "ake-row";
@@ -150,7 +149,7 @@ function makeSlot(pos, type) {
 
 
 /* ==========================================================
-   ADD LOAD ROW (FIXED VERSION)
+   ADD LOAD ROW — NEW .cell HTML
 ========================================================== */
 
 function addLoadRow() {
@@ -161,24 +160,34 @@ function addLoadRow() {
     row.dataset.loadid = loadCounter;
 
     row.innerHTML = `
-        <select class="load-type">
-            <option value="AKE">AKE</option>
-            <option value="AKN">AKN</option>
-            <option value="PAG">PAG</option>
-            <option value="PMC">PMC</option>
-            <option value="PAJ">PAJ</option>
-        </select>
+        <div class="cell">
+            <select class="load-type">
+                <option value="AKE">AKE</option>
+                <option value="AKN">AKN</option>
+                <option value="PAG">PAG</option>
+                <option value="PMC">PMC</option>
+                <option value="PAJ">PAJ</option>
+            </select>
+        </div>
 
-        <input type="text" class="load-uldid" placeholder="ULD">
+        <div class="cell">
+            <input type="text" class="load-uldid" placeholder="ULD">
+        </div>
 
-        <select class="load-bulk">
-            <option value="BY" selected>BY</option>
-            <option value="FKT">FKT</option>
-        </select>
+        <div class="cell">
+            <select class="load-bulk">
+                <option value="BY">BY</option>
+                <option value="FKT">FKT</option>
+            </select>
+        </div>
 
-        <select class="load-pos"></select>
+        <div class="cell">
+            <select class="load-pos"></select>
+        </div>
 
-        <button class="delete-load">X</button>
+        <div class="cell">
+            <button class="delete-load">X</button>
+        </div>
     `;
 
     list.appendChild(row);
@@ -207,17 +216,17 @@ function addLoadRow() {
 
 
 /* ==========================================================
-   EDIT LOAD DATA
+   LOAD EDIT HANDLER
 ========================================================== */
 
 function onLoadEdited(e) {
     const row = e.target.closest(".load-row");
     const load = loads.find(l => l.id == row.dataset.loadid);
 
-    load.type      = row.querySelector(".load-type").value;
-    load.uldid     = row.querySelector(".load-uldid").value.toUpperCase().trim();
-    load.bulk      = row.querySelector(".load-bulk").value;
-    load.position  = row.querySelector(".load-pos").value;
+    load.type = row.querySelector(".load-type").value;
+    load.uldid = row.querySelector(".load-uldid").value.toUpperCase().trim();
+    load.bulk = row.querySelector(".load-bulk").value;
+    load.position = row.querySelector(".load-pos").value;
 
     if (load.position && isPosBlocked(load)) {
         alert(`Position ${load.position} is blocked.`);
@@ -305,7 +314,7 @@ function updateCargoDeck() {
 
 
 /* ==========================================================
-   BLOCKING VISUAL FEEDBACK
+   VISUAL BLOCKING
 ========================================================== */
 
 function applyBlockingVisuals() {
@@ -331,7 +340,7 @@ function markDisabled(pos) {
 
 
 /* ==========================================================
-   DRAG & DROP
+   DRAG & DROP LOGIC
 ========================================================== */
 
 function makeULDdraggable(box) {
@@ -430,7 +439,7 @@ function moveULD(box, slot) {
 
 
 /* ==========================================================
-   HIGHLIGHT VALID SLOTS
+   SLOT HIGHLIGHTING
 ========================================================== */
 
 function highlightSlots(type) {
@@ -480,7 +489,7 @@ function deleteLoad(id) {
 
 
 /* ==========================================================
-   CLEAR ALL LOADS
+   CLEAR ALL
 ========================================================== */
 
 function clearAllLoads() {
