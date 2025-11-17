@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Visual LIR - Cargo Deck Builder</title>
+  <title>Visual LIR - A330 Cargo Deck</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -18,11 +18,9 @@
 
     <h2>Load Builder</h2>
 
-    <!-- Aircraft selector -->
-    <label style="color:#ccc; font-size:13px;">Select Aircraft:</label>
-    <select id="aircraftSelect" class="aircraft-select">
-      <option value="ec-nog">EC-NOG (A330)</option>
-      <!-- more aircraft will be added here -->
+    <label>Select Aircraft:</label>
+    <select id="aircraftSelect">
+      <option value="ECNOG">EC-NOG (A330)</option>
     </select>
 
     <!-- Add Load -->
@@ -30,15 +28,6 @@
 
     <!-- Dynamic Load List -->
     <div id="loadList" class="load-list"></div>
-
-    <!-- Buttons -->
-    <div class="sidebar-buttons">
-      <button id="export-btn">Export Layout</button>
-      <button id="clear-btn" class="danger">Clear All</button>
-    </div>
-
-    <!-- Export Output -->
-    <textarea id="export-output" readonly placeholder="Export output will appear here..."></textarea>
 
   </aside>
 
@@ -49,17 +38,52 @@
   <main class="cargo-area">
 
     <header class="header">
-      <h1 id="aircraftTitle">Cargo Deck - EC-NOG (A330)</h1>
-      <p class="subtitle">Dynamic Layout · Real AKE/PAG widths · Blocking logic</p>
+      <h1>Cargo Deck - EC-NOG (A330)</h1>
+      <p class="subtitle">Dynamic Layout • Real AKE/PAG widths • Blocking logic</p>
     </header>
 
-    <!-- Dynamic deck will be injected here -->
-    <div id="deckContainer"></div>
+    <!-- ================================== -->
+    <!--            FORWARD HOLD            -->
+    <!-- ================================== -->
+    <section class="hold-section">
+      <h2>FORWARD HOLD</h2>
+
+      <div class="deck-grid" id="forwardHold"></div>
+    </section>
+
+    <!-- ================================== -->
+    <!--              AFT HOLD              -->
+    <!-- ================================== -->
+    <section class="hold-section">
+      <h2>AFT HOLD</h2>
+
+      <div class="deck-grid aft-grid" id="aftHold"></div>
+    </section>
+
+    <!-- ================================== -->
+    <!--   BLACK BAR FOR BUTTONS (NEW)     -->
+    <!-- ================================== -->
+    <div class="cargo-buttons-bar">
+      <button id="export-btn">Export Layout</button>
+      <button id="clear-btn" class="danger">Clear All</button>
+    </div>
 
   </main>
 
-</div><!-- /app-container -->
+</div>
 
-<script type="module" src="script.js"></script>
+<!-- ========================== -->
+<!--      EXPORT POPUP         -->
+<!-- ========================== -->
+<div id="exportModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Export Output</h3>
+    <textarea id="export-output" readonly></textarea>
+    <button id="closeModal">Close</button>
+  </div>
+</div>
+
+<script src="ec-nog.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
