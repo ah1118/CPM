@@ -25,7 +25,7 @@ body {
    SIDEBAR
 ========================= */
 .sidebar {
-  width: 330px;
+  width: 510px;
   background: rgba(10, 18, 35, 0.82);
   border-radius: 14px;
   padding: 22px;
@@ -77,9 +77,9 @@ body {
   align-items: center;
   gap: 12px;
 
-  padding: 12px 16px;
+  padding: 10px 10px;
   width: 100%;
-  min-height: 70px;
+  min-height: 0px;
   overflow: hidden;
 }
 
