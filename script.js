@@ -14,21 +14,27 @@ const aircraft = {
         },
 
         aft: {
-            akeLeft:  ["43L","42L","41L","34L","33L","32L","31L"],
-            akeRight: ["43R","42R","41R","34R","33R","32R","31R"],
+            // YOUR UPDATED AFT POSITIONS EXACTLY AS REQUIRED
+            akeLeft:  ["52L","53L","43L","42L","41L","34L","33L","32L","31L"],
+            akeRight: ["52R","53R","43R","42R","41R","34R","33R","32R","31R"],
             pallet:   ["42P","41P","33P","32P","31P"]
         }
     },
 
     containerPositions: [
+        // FORWARD — SAME
         "26L","25L","24L","23L","22L","21L","13L","12L","11L",
         "26R","25R","24R","23R","22R","21R","13R","12R","11R",
-        "43L","42L","41L","34L","33L","32L","31L",
-        "43R","42R","41R","34L","33L","32L","31L"
+
+        // UPDATED AFT — EXACT ORDER YOU REQUESTED
+        "52L","53L","43L","42L","41L","34L","33L","32L","31L",
+        "52R","53R","43R","42R","41R","34R","33R","32R","31R"
     ],
 
     palletPositions: [
+        // FORWARD
         "24P","23P","22P","21P","12P","11P",
+        // AFT — unchanged
         "42P","41P","33P","32P","31P"
     ],
 
@@ -39,6 +45,8 @@ const aircraft = {
         "21P": ["22L","22R","21L","21R"],
         "12P": ["13L","13R","12L","12R"],
         "11P": ["12L","12R","11L","11R"],
+
+        // AFT — unchanged
         "42P": ["43L","43R","42L","42R"],
         "41P": ["42L","42R","41L","41R"],
         "33P": ["34L","34R","33L","33R"],
