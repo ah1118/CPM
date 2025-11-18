@@ -118,43 +118,67 @@ function makeHoldSection(name, cfg) {
     wrap.className = "hold-section";
     wrap.innerHTML = `<h2>${name}</h2>`;
 
+    /* MAIN GRID */
     const grid = document.createElement("div");
-    grid.className = name.includes("AFT") ? "deck-grid aft-grid" : "deck-grid";
+    grid.className = name.includes("AFT") ? "aft-grid-wrapper" : "deck-grid";
 
-    /* ==========================================================
-       ADD PROTECTED WHITE BOX ONLY IN AFT HOLD
-    ========================================================== */
+    /* ONLY FOR AFT HOLD → split into 2 columns */
     if (name.includes("AFT")) {
+
+        const leftCol = document.createElement("div");
+        leftCol.className = "aft-left-col";
+
         const protectedBox = document.createElement("div");
         protectedBox.className = "protected-box";
-        grid.appendChild(protectedBox);
+        leftCol.appendChild(protectedBox);
+
+        const rightCol = document.createElement("div");
+        rightCol.className = "aft-right-col";
+
+        /* AKE LEFT */
+        const L = document.createElement("div");
+        L.className = "ake-row";
+        cfg.akeLeft.forEach(p => L.appendChild(makeSlot(p, "ake")));
+        rightCol.appendChild(L);
+
+        /* AKE RIGHT */
+        const R = document.createElement("div");
+        R.className = "ake-row";
+        cfg.akeRight.forEach(p => R.appendChild(makeSlot(p, "ake")));
+        rightCol.appendChild(R);
+
+        /* PALLET */
+        const P = document.createElement("div");
+        P.className = "pallet-row";
+        cfg.pallet.forEach(p => P.appendChild(makeSlot(p, "pallet")));
+        rightCol.appendChild(P);
+
+        grid.appendChild(leftCol);
+        grid.appendChild(rightCol);
+        wrap.appendChild(grid);
+        return wrap;
     }
 
-    /* ==========================================================
-       NORMAL AKE LEFT ROW
-    ========================================================== */
+    /* FORWARD HOLD (unchanged) */
+    const gridFwd = document.createElement("div");
+    gridFwd.className = "deck-grid";
+
     const L = document.createElement("div");
     L.className = "ake-row";
     cfg.akeLeft.forEach(p => L.appendChild(makeSlot(p, "ake")));
-    grid.appendChild(L);
+    gridFwd.appendChild(L);
 
-    /* ==========================================================
-       NORMAL AKE RIGHT ROW
-    ========================================================== */
     const R = document.createElement("div");
     R.className = "ake-row";
     cfg.akeRight.forEach(p => R.appendChild(makeSlot(p, "ake")));
-    grid.appendChild(R);
+    gridFwd.appendChild(R);
 
-    /* ==========================================================
-       PALLET ROW
-    ========================================================== */
     const P = document.createElement("div");
     P.className = "pallet-row";
     cfg.pallet.forEach(p => P.appendChild(makeSlot(p, "pallet")));
-    grid.appendChild(P);
+    gridFwd.appendChild(P);
 
-    wrap.appendChild(grid);
+    wrap.appendChild(gridFwd);
     return wrap;
 }
 
