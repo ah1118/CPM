@@ -16,7 +16,8 @@ const aircraft = {
         aft: {
             akeLeft:  ["43L","42L","41L","34L","33L","32L","31L"],
             akeRight: ["43R","42R","41R","34R","33R","32R","31R"],
-            pallet:   ["42P","41P","33P","32P","31P"]
+            pallet:   ["42P","41P","33P","32P","31P"],
+            bulk:     ["53","52","51"]   // NEW BULK POSITIONS
         }
     },
 
@@ -31,6 +32,8 @@ const aircraft = {
         "24P","23P","22P","21P","12P","11P",
         "42P","41P","33P","32P","31P"
     ],
+
+    bulkPositions: ["53","52","51"], // NEW — Free load zone
 
     palletBlocks: {
         "24P": ["26L","26R","25L","25R"],
@@ -57,6 +60,7 @@ let loadCounter = 1;
 
 let containerPositions = [];
 let palletPositions = [];
+let bulkPositions = [];
 let palletBlocks = {};
 let containerBlocks = {};
 
@@ -86,8 +90,10 @@ window.addEventListener("DOMContentLoaded", () => {
 function loadAircraftProfile() {
     containerPositions = aircraft.containerPositions;
     palletPositions = aircraft.palletPositions;
+    bulkPositions = aircraft.bulkPositions; // NEW
     palletBlocks = aircraft.palletBlocks;
 
+    // Build reverse-block map
     containerBlocks = {};
     for (const [p, list] of Object.entries(palletBlocks)) {
         list.forEach(c => {
@@ -102,7 +108,7 @@ function loadAircraftProfile() {
 
 
 /* ==========================================================
-   RENDER DECK
+   RENDER DECK (with bulk)
 ========================================================== */
 
 function renderDeck(layout) {
@@ -121,23 +127,33 @@ function makeHoldSection(name, cfg) {
     const grid = document.createElement("div");
     grid.className = name.includes("AFT") ? "deck-grid aft-grid" : "deck-grid";
 
+    // Left row
     const L = document.createElement("div");
     L.className = "ake-row";
     cfg.akeLeft.forEach(p => L.appendChild(makeSlot(p, "ake")));
+    grid.appendChild(L);
 
+    // Right row
     const R = document.createElement("div");
     R.className = "ake-row";
     cfg.akeRight.forEach(p => R.appendChild(makeSlot(p, "ake")));
+    grid.appendChild(R);
 
+    // Pallet row
     const P = document.createElement("div");
     P.className = "pallet-row";
     cfg.pallet.forEach(p => P.appendChild(makeSlot(p, "pallet")));
-
-    grid.appendChild(L);
-    grid.appendChild(R);
     grid.appendChild(P);
-    wrap.appendChild(grid);
 
+    // **NEW BULK BLOCK**
+    if (cfg.bulk) {
+        const bulkWrap = document.createElement("div");
+        bulkWrap.className = "bulk-row";
+        cfg.bulk.forEach(b => bulkWrap.appendChild(makeSlot(b, "bulk")));
+        grid.appendChild(bulkWrap);
+    }
+
+    wrap.appendChild(grid);
     return wrap;
 }
 
@@ -150,7 +166,7 @@ function makeSlot(pos, type) {
 
 
 /* ==========================================================
-   ADD LOAD ROW — USING TEMPLATE (NO HTML IN JS)
+   ADD LOAD ROW (template)
 ========================================================== */
 
 function addLoadRow() {
@@ -202,10 +218,13 @@ function onLoadEdited(e) {
     load.bulk = row.querySelector(".load-bulk").value;
     load.position = row.querySelector(".load-pos").value;
 
-    if (load.position && isPosBlocked(load)) {
-        alert(`Position ${load.position} is blocked.`);
-        row.querySelector(".load-pos").value = "";
-        load.position = "";
+    // Bulk never blocks anything
+    if (!bulkPositions.includes(load.position)) {
+        if (load.position && isPosBlocked(load)) {
+            alert(`Position ${load.position} is blocked.`);
+            row.querySelector(".load-pos").value = "";
+            load.position = "";
+        }
     }
 
     updateCargoDeck();
@@ -226,9 +245,13 @@ function onTypeChanged(e) {
 function updatePositionDropdown(row, type) {
     const sel = row.querySelector(".load-pos");
 
-    const list = (type === "AKE" || type === "AKN")
-        ? containerPositions
-        : palletPositions;
+    let list =
+        (type === "AKE" || type === "AKN")
+            ? containerPositions
+            : palletPositions;
+
+    // Add bulk always
+    list = [...list, ...bulkPositions];
 
     sel.innerHTML = `
         <option value="">POS</option>
@@ -239,10 +262,13 @@ function updatePositionDropdown(row, type) {
 
 /* ==========================================================
    BLOCKING LOGIC
+   BULK IS NEVER BLOCKED
 ========================================================== */
 
 function isPosBlocked(load) {
     if (!load.position) return false;
+
+    if (bulkPositions.includes(load.position)) return false;
 
     if (["PAG","PMC","PAJ"].includes(load.type)) {
         return palletBlocks[load.position]?.some(c => isSlotUsed(c));
@@ -299,6 +325,7 @@ function applyBlockingVisuals() {
 
     for (const load of loads) {
         if (!load.position) continue;
+        if (bulkPositions.includes(load.position)) continue;
 
         if (["PAG","PMC","PAJ"].includes(load.type)) {
             palletBlocks[load.position]?.forEach(markDisabled);
@@ -309,13 +336,14 @@ function applyBlockingVisuals() {
 }
 
 function markDisabled(pos) {
+    if (bulkPositions.includes(pos)) return;
     const slot = document.querySelector(`.slot[data-pos="${pos}"]`);
     if (slot) slot.classList.add("disabled");
 }
 
 
 /* ==========================================================
-   DRAG & DROP LOGIC
+   DRAG & DROP
 ========================================================== */
 
 function makeULDdraggable(box) {
@@ -364,12 +392,24 @@ function makeULDdraggable(box) {
             if (d < bestDist) bestDist = d, best = slot;
         });
 
-        if (
-            best &&
-            bestDist < 90 &&
-            isCorrectSlotType(draggingULD.dataset.uldType, best.dataset.pos) &&
-            !best.classList.contains("disabled")
-        ) {
+        if (best && bestDist < 90) {
+
+            // check slot type only if not bulk
+            if (!bulkPositions.includes(best.dataset.pos)) {
+                if (!isCorrectSlotType(draggingULD.dataset.uldType, best.dataset.pos)) {
+                    draggingULD.remove();
+                    updateCargoDeck();
+                    draggingULD = null;
+                    return;
+                }
+                if (best.classList.contains("disabled")) {
+                    draggingULD.remove();
+                    updateCargoDeck();
+                    draggingULD = null;
+                    return;
+                }
+            }
+
             moveULD(draggingULD, best);
         }
 
@@ -385,9 +425,12 @@ function makeULDdraggable(box) {
 
 /* ==========================================================
    SLOT TYPE VALIDATION
+   Bulk always accepts anything
 ========================================================== */
 
 function isCorrectSlotType(type, pos) {
+    if (bulkPositions.includes(pos)) return true;
+
     const isP = pos.endsWith("P");
 
     return (
@@ -413,7 +456,7 @@ function moveULD(box, slot) {
 
 
 /* ==========================================================
-   SLOT HIGHLIGHTING
+   HIGHLIGHTS
 ========================================================== */
 
 function highlightSlots(type) {
@@ -423,6 +466,13 @@ function highlightSlots(type) {
         slot.style.opacity = "1";
 
         const pos = slot.dataset.pos;
+
+        // Bulk always valid
+        if (bulkPositions.includes(pos)) {
+            slot.style.outline = "2px solid #22c55e";
+            return;
+        }
+
         const isP = pos.endsWith("P");
 
         const valid =
