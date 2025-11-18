@@ -330,16 +330,37 @@ body {
 /* ======================================
    PROTECTED WHITE BOX IN AFT HOLD
 ====================================== */
+/* ======================================
+   PROTECTED WHITE BOX IN AFT HOLD
+====================================== */
 .protected-box {
-  width: 120px;
-  height: 90px;
-
+  width: 140px;
+  height: 110px;
   background: #ffffff;
-  border-radius: 14px;
-  margin-right: 20px;
-
+  border-radius: 16px;
+  box-shadow: 0 0 18px rgba(255,255,255,0.6);
   border: 2px solid #d1d5db;
-  box-shadow: 0 0 12px rgba(255,255,255,0.4);
-
   flex-shrink: 0;
+  margin-right: 20px;
 }
+
+.aft-grid-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
+  align-items: flex-start;
+}
+
+.aft-left-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.aft-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+
