@@ -2,35 +2,100 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Visual LIR - A330 Cargo Deck</title>
+  <title>Visual LIR - Cargo Loader</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="app-container">
+<!-- ===================================================== -->
+<!--  POPUP: FLIGHT SETUP                                  -->
+<!-- ===================================================== -->
+
+<div id="aircraftPopup" class="popup-backdrop">
+  <div class="popup-window">
+      <h2>Flight Setup</h2>
+
+      <!-- AIRCRAFT SELECTION -->
+      <label class="popup-label">Select Aircraft</label>
+      <select id="aircraftSelect" class="popup-select">
+          <option value="">-- Choose Aircraft --</option>
+          <option value="EC-NOG">EC-NOG (A330-300)</option>
+      </select>
+
+      <!-- FLIGHT NUMBER -->
+      <label class="popup-label">Flight Number</label>
+      <input id="flightNumber" type="text" placeholder="e.g. SV1234">
+
+      <!-- DESTINATION -->
+      <label class="popup-label">Destination</label>
+      <select id="flightDestination" class="popup-select">
+          <option value="">-- Choose Destination --</option>
+          <option value="MED">MED — Madinah</option>
+          <option value="JED">JED — Jeddah</option>
+      </select>
+      <button id="loadAircraftPopupBtn">Load Aircraft</button>
+  </div>
+</div>
+
+
+<!-- ===================================================== -->
+<!--  MAIN APPLICATION                                      -->
+<!-- ===================================================== -->
+
+<div id="appWrapper" class="app-container hidden">
 
   <!-- LEFT SIDEBAR -->
   <aside class="sidebar">
-    <h2>Load Builder</h2>
 
-    <label>Aircraft Loaded:</label>
-    <div class="aircraft-fixed">EC-NOG (A330-200F)</div>
+    <div id="aircraftNameBox" class="aircraft-fixed">--</div>
 
     <button id="addLoadBtn" class="add-load-btn">+ Add Load</button>
 
-    <!-- LOAD LIST -->
     <div id="loadList" class="load-list"></div>
+
   </aside>
 
-  <!-- RIGHT CARGO AREA -->
+  <!-- RIGHT AREA -->
   <main class="cargo-area">
 
     <header class="header">
-      <h1>Cargo Deck - EC-NOG (A330)</h1>
+      <h1 id="deckTitle">Cargo Deck</h1>
       <p class="subtitle">Dynamic Layout · Real AKE/PAG widths · Blocking logic</p>
     </header>
+
+    <!-- ============================================ -->
+    <!-- PASSENGER & PIECES SUMMARY PANEL             -->
+    <!-- ============================================ -->
+    <div id="summaryPanel" class="summary-panel">
+        <h3>Flight Summary</h3>
+
+        <div class="summary-grid">
+            <div class="summary-item">
+                <label>Male</label>
+                <input type="number" id="sumMale" class="summary-input" value="0">
+            </div>
+            <div class="summary-item">
+                <label>Female</label>
+                <input type="number" id="sumFemale" class="summary-input" value="0">
+            </div>
+            <div class="summary-item">
+                <label>Child</label>
+                <input type="number" id="sumChild" class="summary-input" value="0">
+            </div>
+            <div class="summary-item">
+                <label>Infant</label>
+                <input type="number" id="sumInfant" class="summary-input" value="0">
+            </div>
+            <div class="summary-item total-box">
+                <label>Total Pieces</label>
+                <input type="number" id="sumPieces" class="summary-input" value="0">
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
 
     <div id="deckContainer"></div>
 
@@ -43,7 +108,11 @@
 
 </div>
 
-<!-- EXPORT MODAL -->
+
+<!-- ===================================================== -->
+<!--  EXPORT MODAL                                          -->
+<!-- ===================================================== -->
+
 <div id="exportModal" class="modal hidden">
   <div class="modal-content">
     <h3>Exported Layout</h3>
@@ -52,7 +121,16 @@
   </div>
 </div>
 
-<script src="script.js"></script>
+
+<!-- ===================================================== -->
+<!--  JAVASCRIPT FILES                                      -->
+<!-- ===================================================== -->
+
+<script src="aircraft-ECNOG.js"></script>
+<script src="startup.js"></script>
+<script src="logic.js"></script>
+<script src="dragdrop.js"></script>
+<script src="export.js"></script>
 
 </body>
 </html>
