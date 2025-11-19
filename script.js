@@ -122,41 +122,54 @@ function makeHoldSection(name, cfg) {
     const grid = document.createElement("div");
     grid.className = name.includes("AFT") ? "aft-grid-wrapper" : "deck-grid";
 
-    /* ONLY FOR AFT HOLD → split into 2 columns */
+    /* ===========================
+       AFT HOLD (with 53 / 52 / 51)
+    ============================== */
     if (name.includes("AFT")) {
 
         const leftCol = document.createElement("div");
         leftCol.className = "aft-left-col";
 
-        /* ==== THREE PROTECTED BOXES (51,52,53 AREA) ==== */
-        const bulkStack = document.createElement("div");
-        bulkStack.className = "bulk-stack";
+        /* ===== REAL BULK LAYOUT (53 tall, 52 top, 51 bottom) ===== */
+        const bulkColumn = document.createElement("div");
+        bulkColumn.className = "bulk-column";
 
-        for (let i = 0; i < 3; i++) {
-            const box = document.createElement("div");
-            box.className = "protected-box";
-            bulkStack.appendChild(box);
-        }
+        /* 53 (tall box) */
+        const box53 = document.createElement("div");
+        box53.className = "bulk-53";
 
-        leftCol.appendChild(bulkStack);
+        /* right side small stack (52 + 51) */
+        const smallStack = document.createElement("div");
+        smallStack.className = "bulk-small-stack";
 
-        /* RIGHT GRID */
+        const box52 = document.createElement("div");
+        box52.className = "bulk-small";
+
+        const box51 = document.createElement("div");
+        box51.className = "bulk-small";
+
+        smallStack.appendChild(box52);
+        smallStack.appendChild(box51);
+
+        bulkColumn.appendChild(box53);
+        bulkColumn.appendChild(smallStack);
+
+        leftCol.appendChild(bulkColumn);
+
+        /* RIGHT GRID (ake left / ake right / pallets) */
         const rightCol = document.createElement("div");
         rightCol.className = "aft-right-col";
 
-        /* AKE LEFT */
         const L = document.createElement("div");
         L.className = "ake-row";
         cfg.akeLeft.forEach(p => L.appendChild(makeSlot(p, "ake")));
         rightCol.appendChild(L);
 
-        /* AKE RIGHT */
         const R = document.createElement("div");
         R.className = "ake-row";
         cfg.akeRight.forEach(p => R.appendChild(makeSlot(p, "ake")));
         rightCol.appendChild(R);
 
-        /* PALLET ROW */
         const P = document.createElement("div");
         P.className = "pallet-row";
         cfg.pallet.forEach(p => P.appendChild(makeSlot(p, "pallet")));
@@ -168,7 +181,10 @@ function makeHoldSection(name, cfg) {
         return wrap;
     }
 
-    /* FORWARD HOLD (unchanged) */
+    /* ===========================
+       FORWARD HOLD (unchanged)
+    ============================== */
+
     const gridFwd = document.createElement("div");
     gridFwd.className = "deck-grid";
 
