@@ -350,11 +350,10 @@ body {
 /* 53 — tall */
 .bulk-53 {
   width: 90px;
-  height: 71px;
+  height: 164px;
   background: white;
   border-radius: 18px;
-  border: 2px solid #e5e7eb;
-  box-shadow: 0 0 12px rgba(255,255,255,0.6);
+  border: 2px solid #e5e7eb;  
 }
 
 /* stack for 52 and 51 */
@@ -371,5 +370,4 @@ body {
   background: white;
   border-radius: 18px;
   border: 2px solid #e5e7eb;
-  box-shadow: 0 0 12px rgba(255,255,255,0.6);
 }
