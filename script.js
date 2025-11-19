@@ -128,10 +128,19 @@ function makeHoldSection(name, cfg) {
         const leftCol = document.createElement("div");
         leftCol.className = "aft-left-col";
 
-        const protectedBox = document.createElement("div");
-        protectedBox.className = "protected-box";
-        leftCol.appendChild(protectedBox);
+        /* ==== THREE PROTECTED BOXES (51,52,53 AREA) ==== */
+        const bulkStack = document.createElement("div");
+        bulkStack.className = "bulk-stack";
 
+        for (let i = 0; i < 3; i++) {
+            const box = document.createElement("div");
+            box.className = "protected-box";
+            bulkStack.appendChild(box);
+        }
+
+        leftCol.appendChild(bulkStack);
+
+        /* RIGHT GRID */
         const rightCol = document.createElement("div");
         rightCol.className = "aft-right-col";
 
@@ -147,7 +156,7 @@ function makeHoldSection(name, cfg) {
         cfg.akeRight.forEach(p => R.appendChild(makeSlot(p, "ake")));
         rightCol.appendChild(R);
 
-        /* PALLET */
+        /* PALLET ROW */
         const P = document.createElement("div");
         P.className = "pallet-row";
         cfg.pallet.forEach(p => P.appendChild(makeSlot(p, "pallet")));
@@ -181,7 +190,6 @@ function makeHoldSection(name, cfg) {
     wrap.appendChild(gridFwd);
     return wrap;
 }
-
 
 function makeSlot(pos, type) {
     const d = document.createElement("div");
