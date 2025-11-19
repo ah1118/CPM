@@ -210,39 +210,6 @@ function makeHoldSection(name, cfg) {
     wrap.appendChild(gridFwd);
     return wrap;
 }
-    /* ===========================
-       FORWARD HOLD (unchanged)
-    ============================== */
-
-    const gridFwd = document.createElement("div");
-    gridFwd.className = "deck-grid";
-
-    const L = document.createElement("div");
-    L.className = "ake-row";
-    cfg.akeLeft.forEach(p => L.appendChild(makeSlot(p, "ake")));
-    gridFwd.appendChild(L);
-
-    const R = document.createElement("div");
-    R.className = "ake-row";
-    cfg.akeRight.forEach(p => R.appendChild(makeSlot(p, "ake")));
-    gridFwd.appendChild(R);
-
-    const P = document.createElement("div");
-    P.className = "pallet-row";
-    cfg.pallet.forEach(p => P.appendChild(makeSlot(p, "pallet")));
-    gridFwd.appendChild(P);
-
-    wrap.appendChild(gridFwd);
-    return wrap;
-}
-
-function makeSlot(pos, type) {
-    const d = document.createElement("div");
-    d.className = `slot ${type}`;
-    d.dataset.pos = pos;
-    return d;
-}
-
 
 /* ==========================================================
    ADD LOAD ROW — NEW .cell HTML
