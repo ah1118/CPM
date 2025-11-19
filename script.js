@@ -134,19 +134,22 @@ function makeHoldSection(name, cfg) {
         const bulkColumn = document.createElement("div");
         bulkColumn.className = "bulk-column";
 
-        /* 53 (tall box) */
+        /* --- 53 (tall box) --- */
         const box53 = document.createElement("div");
         box53.className = "bulk-53";
+        box53.textContent = "53";   // <-- ADDED
 
-        /* right side small stack (52 + 51) */
+        /* --- 52 + 51 stack --- */
         const smallStack = document.createElement("div");
         smallStack.className = "bulk-small-stack";
 
         const box52 = document.createElement("div");
         box52.className = "bulk-small";
+        box52.textContent = "52";   // <-- ADDED
 
         const box51 = document.createElement("div");
         box51.className = "bulk-small";
+        box51.textContent = "51";   // <-- ADDED
 
         smallStack.appendChild(box52);
         smallStack.appendChild(box51);
@@ -156,7 +159,7 @@ function makeHoldSection(name, cfg) {
 
         leftCol.appendChild(bulkColumn);
 
-        /* RIGHT GRID (ake left / ake right / pallets) */
+        /* RIGHT GRID (AKE L / AKE R / PALLETS) */
         const rightCol = document.createElement("div");
         rightCol.className = "aft-right-col";
 
@@ -178,9 +181,35 @@ function makeHoldSection(name, cfg) {
         grid.appendChild(leftCol);
         grid.appendChild(rightCol);
         wrap.appendChild(grid);
+
         return wrap;
     }
 
+    /* ===========================
+       FORWARD HOLD (unchanged)
+    ============================== */
+
+    const gridFwd = document.createElement("div");
+    gridFwd.className = "deck-grid";
+
+    const L = document.createElement("div");
+    L.className = "ake-row";
+    cfg.akeLeft.forEach(p => L.appendChild(makeSlot(p, "ake")));
+    gridFwd.appendChild(L);
+
+    const R = document.createElement("div");
+    R.className = "ake-row";
+    cfg.akeRight.forEach(p => R.appendChild(makeSlot(p, "ake")));
+    gridFwd.appendChild(R);
+
+    const P = document.createElement("div");
+    P.className = "pallet-row";
+    cfg.pallet.forEach(p => P.appendChild(makeSlot(p, "pallet")));
+    gridFwd.appendChild(P);
+
+    wrap.appendChild(gridFwd);
+    return wrap;
+}
     /* ===========================
        FORWARD HOLD (unchanged)
     ============================== */
