@@ -300,7 +300,11 @@ function onTypeChanged(e) {
 
     updatePositionDropdown(row, type);
     updateCargoDeck();
+
+    // ⭐ IMPORTANT — re-check duplicates after type change
+    checkDuplicateULDIDs();
 }
+
 
 
 function getBlockedPositionsForUI(currentLoadId) {
@@ -374,43 +378,105 @@ function updatePositionDropdown(row, type) {
 
 
 function onLoadEdited(e) {
-    const row = e.target.closest(".load-row");
+    const row  = e.target.closest(".load-row");
     const load = loads.find(l => l.id == row.dataset.loadid);
 
     const oldPos = load.position;
 
+    // update fields
     load.type   = row.querySelector(".load-type").value;
     load.uldid  = row.querySelector(".load-uldid").value.toUpperCase().trim();
-    load.weight = parseInt(row.querySelector(".load-weight").value || "0");
     load.bulk   = row.querySelector(".load-bulk").value;
+    load.weight = parseInt(row.querySelector(".load-weight").value || "0");
     load.position = row.querySelector(".load-pos").value;
 
-    // ⭐ ONLY VALIDATE BLK IF THE POSITION FIELD CHANGED
-    if (e.target.classList.contains("load-pos")) {
+    // ============================
+    //  ⭐ FKT SPECIAL CASE
+    // ============================
+    const weightField = row.querySelector(".load-weight");
 
+    if (load.bulk === "FKT") {
+        weightField.disabled = true;
+        weightField.value = "";
+        load.weight = 0;
+    } else {
+        weightField.disabled = false;
+    }
+
+    // BLK validation
+    if (e.target.classList.contains("load-pos")) {
         if (load.type === "BLK" && !["51","52","53"].includes(load.position)) {
             alert("BLK must be placed ONLY in 51 • 52 • 53.");
-
-            // restore old position instead of clearing everything
             load.position = oldPos;
             row.querySelector(".load-pos").value = oldPos;
-
-            return; // stop early
+            return;
         }
 
-        // Check blocking only when POS changes
         if (load.position && isPosBlocked(load)) {
             alert(`Position ${load.position} is blocked.`);
-
             load.position = oldPos;
             row.querySelector(".load-pos").value = oldPos;
-
             return;
         }
     }
 
+    checkDuplicateULDIDs();
     updateCargoDeck();
+    toggleExportButton();
 }
+
+
+function toggleExportButton() {
+    const btn = document.getElementById("export-btn");
+    if (allLoadsValid()) {
+        btn.disabled = false;
+        btn.style.opacity = "1";
+        btn.style.cursor = "pointer";
+    } else {
+        btn.disabled = true;
+        btn.style.opacity = "0.4";
+        btn.style.cursor = "not-allowed";
+    }
+}
+
+
+function checkDuplicateULDIDs() {
+    const used = {};
+    const duplicates = new Set();
+
+    // Build combined-key duplicates
+    loads.forEach(l => {
+        if (!l.uldid) return;
+
+        const key = `${l.type}_${l.uldid}`;
+
+        if (used[key]) duplicates.add(key);
+        used[key] = true;
+    });
+
+    // Highlight in UI
+    document.querySelectorAll(".load-row").forEach(row => {
+        const type = row.querySelector(".load-type").value;
+        const id   = row.querySelector(".load-uldid").value.trim().toUpperCase();
+        const inp  = row.querySelector(".load-uldid");
+
+        const key = `${type}_${id}`;
+
+        // UPDATED LINE: no duplicate highlight if ID is empty
+        if (id && duplicates.has(key)) {
+            inp.style.border = "2px solid #ff3333";
+            inp.style.backgroundColor = "rgba(255,0,0,0.12)";
+        } else {
+            inp.style.border = "";
+            inp.style.backgroundColor = "";
+        }
+    });
+
+    return duplicates.size > 0;
+}
+
+
+
 
 
 
@@ -437,10 +503,12 @@ function updateCargoDeck() {
         box.dataset.uldType = load.type;
 
         if (load.type === "BLK") {
-            box.innerHTML = `${load.bulk}<br>${load.weight} KG`;
+            const weightTxt = load.weight ? `${load.weight} KG` : "";
+            box.innerHTML = load.bulk + (weightTxt ? "<br>" + weightTxt : "");
         } else {
-            if (!load.uldid) continue;
-            box.innerHTML = `${load.uldid}<br>${load.weight} KG`;
+            const label = load.uldid || load.type;  // use ULDID if present, otherwise AKE/PAG/...
+            const weightTxt = load.weight ? `${load.weight} KG` : "";
+            box.innerHTML = label + (weightTxt ? "<br>" + weightTxt : "");
         }
 
         slot.appendChild(box);
@@ -516,3 +584,33 @@ function startSidebarULDdrag(loadId, rowEl) {
     document.addEventListener("mouseup", onUp);
 }
 
+// AUTO-UPPERCASE for all ULD ID inputs
+document.addEventListener("input", function (e) {
+    if (e.target.classList.contains("load-uldid")) {
+        e.target.value = e.target.value.toUpperCase();
+    }
+});
+
+function allLoadsValid() {
+    for (const l of loads) {
+
+        // FKT loads – need only position
+        if (l.bulk === "FKT") {
+            if (!l.position) return false;
+            continue;
+        }
+
+        // BLK loads – must have weight + position
+        if (l.type === "BLK") {
+            if (!l.position) return false;
+            if (!l.weight || l.weight <= 0) return false;
+            continue;
+        }
+
+        // ULD loads (AKE/AKN/PAG/PMC/PAJ)
+        // NEW RULE: ID and WEIGHT are OPTIONAL
+        if (!l.position) return false;
+    }
+
+    return true;
+}
