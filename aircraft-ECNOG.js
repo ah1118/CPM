@@ -6,6 +6,12 @@ const aircraft_ECNOG = {
     registration: "EC-NOG",
     type: "A330-300",
 
+    ldm: {
+        station: "CZL",
+        seatCode: "380",
+        seatConfig: "2/4/0"
+    },
+
     /* ======================================================
        RULE 3 — MASTER ORDER
        ====================================================== */
