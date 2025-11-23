@@ -80,7 +80,7 @@ function exportLDM() {
     const out = [];
 
     out.push("LDM");
-    out.push(`${flight}/${day}.${reg}.${ac.ldm.station}.${ac.ldm.seatCode}.${ac.ldm.seatConfig}`);
+    out.push(`${flight}/${day}.${reg}.${ac.ldm.station}.${ac.ldm.seatTotal}.${ac.ldm.seatConfig}`);
 
     // second line compact, NO SPACES
     out.push(
