@@ -125,8 +125,10 @@ body {
   padding: 20px;
   border-radius: 16px;
   border: 1px solid rgba(148, 163, 184, 0.25);
-}
 
+  /* FIX — do NOT match sidebar height */
+  align-self: flex-start;
+}
 .cargo-area h1 {
   margin: 0;
   font-size: 24px;
@@ -616,4 +618,42 @@ input[type="number"] {
 .summary-input::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+
+/* --------------------------------------------------
+   Signature Badge (Professional + Italic)
+-------------------------------------------------- */
+.signature {
+    position: fixed;
+    bottom: 18px;
+    right: 22px;
+
+    font-size: 15px;
+    font-weight: 500;
+    font-style: italic;          /* << added */
+    letter-spacing: 0.4px;
+
+    padding: 8px 20px;
+    border-radius: 12px;
+
+    color: #f0f0f0;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+
+    box-shadow: 0 0 18px rgba(0, 0, 0, 0.45);
+
+    opacity: 0.88;
+    user-select: none;
+    transition: 0.25s ease;
+    z-index: 5001 !important;   /* ← This fixes the blur */
+}
+
+.signature:hover {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.02);
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 22px rgba(0, 0, 0, 0.55);
 }
