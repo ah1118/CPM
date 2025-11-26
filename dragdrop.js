@@ -257,11 +257,15 @@ function startSidebarULDdrag(loadId, rowEl) {
     const load = loads.find(l => l.id == loadId);
     if (!load) return;
 
-    // Create drag box
+    // ------------------------------
+    //  Create the draggable ULD box
+    // ------------------------------
     const box = document.createElement("div");
     box.className = "uld-box dragging";
-    box.textContent = (load.uldid ? load.uldid : load.type) +
-                      (load.weight ? "\n" + load.weight + " KG" : "");
+    box.textContent =
+        (load.uldid ? load.uldid : load.type) +
+        (load.weight ? "\n" + load.weight + " KG" : "");
+
     box.dataset.loadId = load.id;
     box.dataset.uldType = load.type;
     box.style.position = "fixed";
@@ -274,26 +278,37 @@ function startSidebarULDdrag(loadId, rowEl) {
 
     highlightSlots(load.type);
 
+    // ------------------------------
+    //  Mouse movement
+    // ------------------------------
     function onMove(e) {
         draggingULD.style.left = e.clientX + "px";
         draggingULD.style.top = e.clientY + "px";
         draggingULD.style.transform = "translate(-50%, -50%)";
     }
 
+    // ------------------------------
+    //  Mouse up → drop
+    // ------------------------------
     function onUp(e) {
         document.removeEventListener("mousemove", onMove);
         document.removeEventListener("mouseup", onUp);
 
         let best = null, bestDist = Infinity;
 
+        // find nearest slot center
         document.querySelectorAll(".slot").forEach(slot => {
             const r = slot.getBoundingClientRect();
             const cx = r.left + r.width / 2;
             const cy = r.top + r.height / 2;
             const d = Math.hypot(e.clientX - cx, e.clientY - cy);
+
             if (d < bestDist) bestDist = d, best = slot;
         });
 
+        // ----------------------------------------
+        //  Valid drop?
+        // ----------------------------------------
         if (
             best &&
             bestDist < 90 &&
@@ -301,11 +316,10 @@ function startSidebarULDdrag(loadId, rowEl) {
             !best.classList.contains("disabled")
         ) {
 
-            // 🚫 PREVENT DROP ON OCCUPIED SLOT
+            // ❌ Slot occupied
             if (best.querySelector(".uld-box")) {
                 alert(`Position ${best.dataset.pos} already has a load.`);
 
-                // just cancel the drag
                 draggingULD.remove();
                 draggingULD = null;
                 isDragging = false;
@@ -313,16 +327,27 @@ function startSidebarULDdrag(loadId, rowEl) {
                 return;
             }
 
-            // ✅ Allowed drop
+            // ✅ Apply new position
             load.position = best.dataset.pos;
+
+            // ⭐ AUTO-UPDATE SIDEBAR POS DROPDOWN
+            const row = document.querySelector(`.load-row[data-loadid="${load.id}"]`);
+            if (row) {
+                const posSelect = row.querySelector(".load-pos");
+                if (posSelect) posSelect.value = load.position;
+            }
+
             updateCargoDeck();
             applyBlockingVisuals();
         }
 
-        // Remove drag box
+        // ------------------------------
+        //  cleanup
+        // ------------------------------
         if (draggingULD) draggingULD.remove();
         draggingULD = null;
         isDragging = false;
+
         clearHighlights();
     }
 
