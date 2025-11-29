@@ -208,6 +208,7 @@ function addLoadRow() {
             <select class="load-bulk">
                 <option value="BY">BY</option>
                 <option value="FKT">FKT</option>
+                <option value="EMPTY">EMPTY</option>
             </select>
         </div>
 
@@ -384,26 +385,42 @@ function onLoadEdited(e) {
     const oldPos = load.position;
 
     // update fields
-    load.type   = row.querySelector(".load-type").value;
-    load.uldid  = row.querySelector(".load-uldid").value.toUpperCase().trim();
-    load.bulk   = row.querySelector(".load-bulk").value;
-    load.weight = parseInt(row.querySelector(".load-weight").value || "0");
+    load.type     = row.querySelector(".load-type").value;
+    load.uldid    = row.querySelector(".load-uldid").value.toUpperCase().trim();
+    load.bulk     = row.querySelector(".load-bulk").value;
+    load.weight   = parseInt(row.querySelector(".load-weight").value || "0");
     load.position = row.querySelector(".load-pos").value;
 
-    // ============================
-    //  ⭐ FKT SPECIAL CASE
-    // ============================
     const weightField = row.querySelector(".load-weight");
 
+    // ============================================================
+    // ⭐ 1. FKT — always disable weight, empty weight
+    // ============================================================
     if (load.bulk === "FKT") {
         weightField.disabled = true;
         weightField.value = "";
         load.weight = 0;
-    } else {
+    }
+
+    // ============================================================
+    // ⭐ 2. EMPTY — ULD exists but has no cargo (X in CPM)
+    // ============================================================
+    else if (load.bulk === "EMPTY") {
+        weightField.disabled = true;
+        weightField.value = "";
+        load.weight = 0;   // X will be used in CPM
+    }
+
+    // ============================================================
+    // ⭐ 3. Normal ULD → weight is re-enabled
+    // ============================================================
+    else {
         weightField.disabled = false;
     }
 
-    // BLK validation
+    // ============================================================
+    // ⭐ BLK VALIDATION
+    // ============================================================
     if (e.target.classList.contains("load-pos")) {
         if (load.type === "BLK" && !["51","52","53"].includes(load.position)) {
             alert("BLK must be placed ONLY in 51 • 52 • 53.");
@@ -424,7 +441,6 @@ function onLoadEdited(e) {
     updateCargoDeck();
     toggleExportButton();
 }
-
 
 function toggleExportButton() {
     const btn = document.getElementById("export-btn");
