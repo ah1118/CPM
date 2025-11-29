@@ -221,6 +221,7 @@ function dragEnd(e) {
     clearHighlights();
     updateCargoDeck();
     applyBlockingVisuals();
+    toggleExportButton();
 }
 
 
@@ -339,6 +340,7 @@ function startSidebarULDdrag(loadId, rowEl) {
 
             updateCargoDeck();
             applyBlockingVisuals();
+            toggleExportButton();   // <<< FIX ADDED HERE
         }
 
         // ------------------------------
