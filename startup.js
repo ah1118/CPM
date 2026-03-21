@@ -35,7 +35,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 window.aircraft = aircraft_ECNYJ;
                 break;
             case "EC-NODQ":
-                window.aircraft = aircraft_ECNODQ;
+                window.aircraft = aircraft_ECODQ;
                 break;
             default:
                 alert("Aircraft profile missing.");
