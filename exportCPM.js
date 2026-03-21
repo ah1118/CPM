@@ -193,7 +193,7 @@ function formatUld(pos, load, dest) {
     // EMPTY ULD → ULD installed but no cargo inside
     if (load.bulk === "EMPTY") {
         const idPart = load.uldid ? load.type + load.uldid : load.type;
-        return `-${pos}/${idPart}/${dest}/X/BY`;
+        return `-${pos}/${idPart}/${dest}/X`;
     }
 
     // NORMAL ULD
