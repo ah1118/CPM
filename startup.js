@@ -34,7 +34,7 @@ window.addEventListener("DOMContentLoaded", () => {
             case "EC-NYJ":
                 window.aircraft = aircraft_ECNYJ;
                 break;
-            case "EC-NODQ":
+            case "EC-ODQ":
                 window.aircraft = aircraft_ECODQ;
                 break;
             default:
