@@ -1,171 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Aircraft Loader</title>
-
-<style>
-    body {
-        font-family: Arial;
-        background: #111;
-        color: #fff;
-        text-align: center;
-    }
-
-    .hidden {
-        display: none;
-    }
-
-    #aircraftPopup {
-        margin-top: 100px;
-    }
-
-    select, input, button {
-        padding: 10px;
-        margin: 5px;
-        font-size: 16px;
-    }
-
-    #appWrapper {
-        margin-top: 40px;
-    }
-
-    #deckTitle {
-        font-size: 20px;
-        margin-top: 10px;
-    }
-</style>
+  <meta charset="UTF-8">
+  <title>Visual LIR - Cargo Loader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- =========================
-     STARTUP POPUP
-========================= -->
-<div id="aircraftPopup">
-    <h2>Select Aircraft</h2>
+<!-- ===================================================== -->
+<!--  POPUP: FLIGHT SETUP                                  -->
+<!-- ===================================================== -->
 
-    <select id="aircraftSelect">
-        <option value="">-- Select Aircraft --</option>
-        <option value="EC-NOG">EC-NOG</option>
-        <option value="EC-NOF">EC-NOF</option>
-        <option value="EC-NYJ">EC-NYJ</option>
-        <option value="EC-ODQ">EC-ODQ</option>
-        <option value="EC-ODR">EC-ODR</option> <!-- ✅ NEW -->
-    </select>
+<div id="aircraftPopup" class="popup-backdrop">
+  <div class="popup-window">
+      <h2>Flight Setup</h2>
 
-    <br>
+      <!-- AIRCRAFT SELECTION -->
+      <label class="popup-label">Select Aircraft</label>
+      <select id="aircraftSelect" class="popup-select">
+          <option value="">-- Choose Aircraft --</option>
+          <option value="EC-NOG">EC-NOG (A330-300)</option>
+          <option value="EC-NOF">EC-NOF (A330-300)</option>
+          <option value="EC-NYJ">EC-NYJ (A330-300)</option>
+          <option value="EC-ODQ">EC-ODQ (A330-300)</option>
+          <option value="EC-ODR">EC-ODR (A330-300)</option>
+      </select>
 
-    <input id="flightNumber" placeholder="Flight Number (e.g. AH1234)">
-    <br>
+      <!-- FLIGHT NUMBER -->
+      <label class="popup-label">Flight Number</label>
+      <input id="flightNumber" type="text" placeholder="e.g. SV1234">
 
-    <select id="flightDestination">
-        <option value="">-- Destination --</option>
-        <option value="ALG">ALG</option>
-        <option value="CDG">CDG</option>
-        <option value="IST">IST</option>
-    </select>
-
-    <br>
-
-    <button id="loadAircraftPopupBtn">Load Aircraft</button>
+      <!-- DESTINATION -->
+      <label class="popup-label">Destination</label>
+      <select id="flightDestination" class="popup-select">
+          <option value="">-- Choose Destination --</option>
+          <option value="MED">MED — Madinah</option>
+          <option value="JED">JED — Jeddah</option>
+      </select>
+      <button id="loadAircraftPopupBtn">Load Aircraft</button>
+  </div>
 </div>
 
 
-<!-- =========================
-     MAIN APP
-========================= -->
-<div id="appWrapper" class="hidden">
-    <h2 id="aircraftNameBox"></h2>
-    <div id="deckTitle"></div>
+<!-- ===================================================== -->
+<!--  MAIN APPLICATION                                     -->
+<!-- ===================================================== -->
 
-    <p>Main UI loaded ✔</p>
+<div id="appWrapper" class="app-container hidden">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+
+    <div id="aircraftNameBox" class="aircraft-fixed">--</div>
+
+    <button id="addLoadBtn" class="add-load-btn">+ Add Load</button>
+
+    <div id="loadList" class="load-list"></div>
+
+  </aside>
+
+  <!-- RIGHT AREA -->
+  <main class="cargo-area">
+
+    <header class="header">
+      <h1 id="deckTitle">Cargo Deck</h1>
+      <p class="subtitle">Dynamic Layout · Real AKE/PAG widths · Blocking logic</p>
+    </header>
+
+    <!-- ============================================ -->
+    <!-- PASSENGER & PIECES SUMMARY PANEL             -->
+    <!-- ============================================ -->
+    <div id="summaryPanel" class="summary-panel">
+        <h3>Flight Summary</h3>
+
+        <div class="summary-grid">
+            <div class="summary-item">
+                <label>Male</label>
+                <input type="number" id="sumMale" class="summary-input" placeholder="0">
+            </div>
+            <div class="summary-item">
+                <label>Female</label>
+                <input type="number" id="sumFemale" class="summary-input" placeholder="0">
+            </div>
+            <div class="summary-item">
+                <label>Child</label>
+                <input type="number" id="sumChild" class="summary-input" placeholder="0">
+            </div>
+            <div class="summary-item">
+                <label>Infant</label>
+                <input type="number" id="sumInfant" class="summary-input" placeholder="0">
+            </div>
+            <div class="summary-item total-box">
+                <label>Total Pieces</label>
+                <input type="number" id="sumPieces" class="summary-input" placeholder="0">
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+
+    <div id="deckContainer"></div>
+
+    <div class="cargo-buttons-bar">
+      <button id="export-btn">Export CPM</button>
+      <button onclick="exportLDM()">Export LDM</button>
+      <button id="clear-btn" class="danger">Clear All</button>
+    </div>
+
+  </main>
+
 </div>
 
 
-<script>
-/* ==========================================================
-   MOCK AIRCRAFT PROFILES (MINIMAL)
-========================================================== */
+<!-- ===================================================== -->
+<!--  EXPORT MODAL                                         -->
+<!-- ===================================================== -->
 
-const aircraft_ECNOG = { registration: "EC-NOG", type: "A330-300", ldm:{seatCode:"Y408"} };
-const aircraft_ECNOF = { registration: "EC-NOF", type: "A330-300", ldm:{seatCode:"Y408"} };
-const aircraft_ECNYJ = { registration: "EC-NYJ", type: "A330-300", ldm:{seatCode:"Y408"} };
-const aircraft_ECODQ = { registration: "EC-ODQ", type: "A330-300", ldm:{seatCode:"Y408"} };
-const aircraft_ECODR = { registration: "EC-ODR", type: "A330-300", ldm:{seatCode:"Y408"} }; // ✅ NEW
+<div id="exportModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Exported Layout</h3>
+    <textarea id="export-output"></textarea>
+    <button id="closeModal">Close</button>
+  </div>
+</div>
 
 
-/* ==========================================================
-   STARTUP LOGIC
-========================================================== */
+<!-- ===================================================== -->
+<!--  JAVASCRIPT FILES                                     -->
+<!-- ===================================================== -->
 
-window.addEventListener("DOMContentLoaded", () => {
+<script src="aircraft-ECNOG.js"></script>
+<script src="aircraft-ECNOF.js"></script>
+<script src="aircraft-ECNYJ.js"></script>
+<script src="aircraft-ECODQ.js"></script>
+<script src="aircraft-ECODR.js"></script>
+<script src="startup.js"></script>
+<script src="logic.js"></script>
+<script src="dragdrop.js"></script>
+<script src="exportCPM.js"></script>
+<script src="exportLDM.js"></script>
 
-    // Force uppercase flight number
-    document.getElementById("flightNumber").addEventListener("input", function () {
-        this.value = this.value.toUpperCase();
-    });
-
-    const loadBtn = document.getElementById("loadAircraftPopupBtn");
-
-    loadBtn.addEventListener("click", () => {
-
-        const acft = document.getElementById("aircraftSelect").value;
-        const flightNo = document.getElementById("flightNumber").value.trim();
-        const dest = document.getElementById("flightDestination").value;
-
-        if (!acft) return alert("Select an aircraft.");
-        if (!flightNo) return alert("Enter flight number.");
-        if (!dest) return alert("Select a destination.");
-
-        /* =========================
-           CLEAN AIRCRAFT MAP
-        ========================= */
-        const AIRCRAFTS = {
-            "EC-NOG": aircraft_ECNOG,
-            "EC-NOF": aircraft_ECNOF,
-            "EC-NYJ": aircraft_ECNYJ,
-            "EC-ODQ": aircraft_ECODQ,
-            "EC-ODR": aircraft_ECODR // ✅ HERE
-        };
-
-        if (!AIRCRAFTS[acft]) {
-            alert("Aircraft profile missing.");
-            return;
-        }
-
-        window.aircraft = AIRCRAFTS[acft];
-
-        /* =========================
-           STORE FLIGHT DATA
-        ========================= */
-        window.flightData = {
-            flightNo,
-            destination: dest
-        };
-
-        /* =========================
-           SHOW MAIN UI
-        ========================= */
-        document.getElementById("aircraftPopup").classList.add("hidden");
-        document.getElementById("appWrapper").classList.remove("hidden");
-
-        /* =========================
-           UPDATE HEADER
-        ========================= */
-        document.getElementById("aircraftNameBox").innerText =
-            `${window.aircraft.registration} (${window.aircraft.type})`;
-
-        document.getElementById("deckTitle").innerText =
-            `${flightNo} → ${dest} — ${window.aircraft.registration}`;
-
-        /* =========================
-           INIT PLACEHOLDER
-        ========================= */
-        console.log("Aircraft loaded:", window.aircraft);
-    });
-});
-</script>
-
+<div class="signature">By Boutout Med Oussama</div>
 </body>
 </html>
