@@ -23,43 +23,66 @@ window.addEventListener("DOMContentLoaded", () => {
         if (!flightNo) return alert("Enter flight number.");
         if (!dest) return alert("Select a destination.");
 
-        // LOAD AIRCRAFT PROFILE
+        /* ======================================================
+           LOAD AIRCRAFT PROFILE
+        ====================================================== */
         switch (acft) {
+
             case "EC-NOG":
                 window.aircraft = aircraft_ECNOG;
                 break;
+
             case "EC-NOF":
                 window.aircraft = aircraft_ECNOF;
                 break;
+
             case "EC-NYJ":
                 window.aircraft = aircraft_ECNYJ;
                 break;
+
             case "EC-ODQ":
                 window.aircraft = aircraft_ECODQ;
                 break;
+
+            case "EC-ODR": // ✅ NEW AIRCRAFT
+                if (typeof aircraft_ECODR === "undefined") {
+                    alert("EC-ODR profile not loaded.");
+                    return;
+                }
+                window.aircraft = aircraft_ECODR;
+                break;
+
             default:
                 alert("Aircraft profile missing.");
                 return;
         }
 
-        // STORE FLIGHT DATA
+        /* ======================================================
+           STORE FLIGHT DATA
+        ====================================================== */
         window.flightData = {
             flightNo,
             destination: dest
         };
 
-        // SHOW MAIN UI
+        /* ======================================================
+           SHOW MAIN UI
+        ====================================================== */
         document.getElementById("aircraftPopup").classList.add("hidden");
         document.getElementById("appWrapper").classList.remove("hidden");
 
-        // UPDATE HEADER
+        /* ======================================================
+           UPDATE HEADER
+        ====================================================== */
         document.getElementById("aircraftNameBox").innerText =
             `${window.aircraft.registration} (${window.aircraft.type})`;
 
         document.getElementById("deckTitle").innerText =
             `${flightNo} → ${dest} — ${window.aircraft.registration}`;
 
-        // RENDER DECK
+        /* ======================================================
+           INIT APP
+        ====================================================== */
         loadAircraftProfile(); 
         enableAppButtons();    
     });
