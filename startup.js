@@ -1,3 +1,11 @@
+const PASSWORD = "1061993";
+
+const entered = prompt("Enter password:");
+
+if (entered !== PASSWORD) {
+    document.body.innerHTML = "<h2>Access denied</h2>";
+    throw new Error("Unauthorized");
+}
 /* ==========================================================
    STARTUP SCREEN — Load Aircraft & Flight Setup
 ========================================================== */
